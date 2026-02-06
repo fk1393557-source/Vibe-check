@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>for u✨</title>
+    <title>for u ✨</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
@@ -24,7 +24,7 @@
             background-size: 100% 35px;
             font-family: 'Inter', sans-serif;
             overflow: hidden; touch-action: none;
-            transition: background 1s; /* Smooth transition to black */
+            transition: background 1s;
         }
 
         .grain-overlay {
@@ -42,7 +42,6 @@
             perspective: 800px;
         }
 
-        /* Background Layer INSIDE start-container so it vanishes after start */
         #background-layer { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 0; pointer-events: none; overflow: hidden; 
@@ -101,7 +100,6 @@
         /* ================= PAGE 2: MEADOW (UI) ================= */
         #page2-ui { display: none; opacity: 0; transition: opacity 1s; }
 
-        /* TEXT ON PAGE 2 - VISIBLE UNTIL INTERACTION */
         #page2-title {
             position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
             font-family: 'Patrick Hand', cursive; font-size: 2rem; 
@@ -157,10 +155,9 @@
             opacity: 0; transition: opacity 0.8s;
             background-image: linear-gradient(var(--paper-lines) 1px, transparent 1px);
             background-size: 100% 35px;
-            transition: background 1s; /* Smooth to black */
+            transition: background 1s;
         }
 
-        /* Envelopes for Page 4 BG */
         .bg-envelopes { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; z-index: -1; }
         .floating-envelope { position: absolute; font-size: 2rem; opacity: 0.3; animation: floatEnv 10s infinite linear; }
         @keyframes floatEnv { 0% { transform: translateY(110vh) rotate(0deg); opacity:0; } 20% {opacity:0.4;} 80% {opacity:0.4;} 100% { transform: translateY(-10vh) rotate(20deg); opacity:0; } }
@@ -171,7 +168,6 @@
             max-width: 80%; line-height: 1.2;
             animation: breathe 3s ease-in-out infinite; 
         }
-        
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
         .option-group { display: flex; flex-wrap: wrap; justify-content: center; max-width: 320px; gap: 15px; }
@@ -193,31 +189,26 @@
             min-height: 50px; padding: 0 20px;
         }
 
-        /* --- GLOWING TEXT ANIMATION --- */
+        /* --- GLOWING TEXT ANIMATION (CLOCKWISE) --- */
         .glowing-text {
             color: #fff;
             text-align: center;
             font-family: 'Patrick Hand', cursive;
-            font-size: 2.5rem;
+            font-size: 3rem; /* Bigger size */
             line-height: 1.4;
             
-            /* The Glow Effect */
-            text-shadow: 
-                0 0 5px #fff,
-                0 0 10px #fff,
-                0 0 20px #ff00de,
-                0 0 40px #ff00de,
-                0 0 80px #ff00de;
-            
-            animation: glow-pulse 1.5s ease-in-out infinite alternate;
+            /* CLOCKWISE TRACKING LIGHT */
+            animation: clock-glow 2s infinite linear;
         }
 
-        @keyframes glow-pulse {
-            from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 40px #ff00de; }
-            to { text-shadow: 0 0 10px #fff, 0 0 20px #d4a373, 0 0 40px #d4a373, 0 0 80px #d4a373; }
+        @keyframes clock-glow {
+            0% { text-shadow: 0 -10px 20px #ff00de, 0 0 10px #fff; } /* Top */
+            25% { text-shadow: 10px 0 20px #ff00de, 0 0 10px #fff; } /* Right */
+            50% { text-shadow: 0 10px 20px #d4a373, 0 0 10px #fff; } /* Bottom */
+            75% { text-shadow: -10px 0 20px #d4a373, 0 0 10px #fff; } /* Left */
+            100% { text-shadow: 0 -10px 20px #ff00de, 0 0 10px #fff; } /* Back to Top */
         }
 
-        /* EXPLOSION PARTICLES */
         .confetti { position: absolute; pointer-events: none; z-index: 9000; font-size: 1.5rem; }
 
         /* ================= MODALS & EXTRAS ================= */
@@ -289,7 +280,6 @@
         
         <div id="q-content">
             <h1 class="question-text">Will you be a my Mitr?</h1>
-            
             <div class="option-group">
                 <div class="option-sticker" style="transform: rotate(-2deg);" onclick="answer('yes')">Yess!</div>
                 <div class="option-sticker" style="transform: rotate(3deg);" onclick="answer('think')">I will think</div>
@@ -446,21 +436,19 @@
             const content = document.getElementById('q-content');
 
             if(type === 'yes') {
-                // 1. BLACKOUT
                 container.style.background = "#000";
                 container.style.backgroundImage = "none";
-                
-                // 2. Hide Question
                 content.style.display = 'none';
+                msg.innerHTML = '<h1 class="glowing-text">We Officially Now Mitrs ✨</h1>';
                 
-                // 3. Glowing Message
-                msg.innerHTML = '<h1 class="glowing-text">Best. Decision. Ever. 💖</h1>';
+                // STOP old music
+                audio.pause();
                 
-                // 4. Play Celebration Music
-                audio.src = 'song3.mp3';
-                audio.play();
+                // PLAY new song safely
+                const celebration = new Audio('song3.mp3');
+                celebration.volume = 1.0;
+                celebration.play().catch(e => console.log("Audio play error", e));
 
-                // 5. Explode Confetti
                 explodeConfetti();
                 
             } else if(type === 'think') {
@@ -503,7 +491,7 @@
         window.addEventListener('click', (e) => { if (!e.target.closest('.credits-container')) document.getElementById('creditsMenu').classList.remove('show'); });
 
         function createFlower(x, y) {
-            // FIX: FADE OUT TITLE ON INTERACTION
+            // FIX: FADE OUT TITLE ON FIRST INTERACTION
             const title = document.getElementById('page2-title');
             if(title && title.style.opacity > 0.1) title.style.opacity = '0';
 
