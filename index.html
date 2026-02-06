@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>for u ✨</title>
+    <title>For You ✨</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
@@ -25,215 +25,83 @@
             font-family: 'Inter', sans-serif;
             overflow: hidden; touch-action: none;
             transition: background 1s;
+            cursor: none; /* Hide default cursor */
         }
 
-        .grain-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 9000; opacity: 0.05;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        /* CUSTOM CURSOR */
+        #custom-cursor {
+            position: fixed; top: 0; left: 0; width: 40px; height: 40px;
+            pointer-events: none; z-index: 9999;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24'%3E%3Cpath fill='%238B4513' d='M20.5 3l-2.6 2.6c-.7-.3-1.5-.2-2.1.4l-1.8 1.8c-.8.8-.8 2.1 0 2.8l1.4 1.4-6.3 6.3C8.4 19 7.6 19.6 7 20.3L3 21l.7-4c.7-.6 1.3-1.4 2-2.1l6.3-6.3 1.4 1.4c.8.8 2.1.8 2.8 0l1.8-1.8c.6-.6.7-1.4.4-2.1L21 3.5 20.5 3z'/%3E%3C/svg%3E");
+            background-size: contain; background-repeat: no-repeat;
+            transform: scaleX(-1) translate(5px, 5px);
+            animation: feather-float 2s ease-in-out infinite;
         }
+        @keyframes feather-float { 0%, 100% { transform: scaleX(-1) translateY(0); } 50% { transform: scaleX(-1) translateY(-5px); } }
+        #custom-cursor.clicking { animation: none; transform: scaleX(-1) rotate(-15deg) scale(0.9); }
 
-        /* ================= PAGE 1: START ================= */
-        #start-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fdf6f0; z-index: 5000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 1s ease-in-out, visibility 1s;
-            perspective: 800px;
-        }
+        .grain-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9000; opacity: 0.05; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
 
-        #background-layer { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            z-index: 0; pointer-events: none; overflow: hidden; 
-        }
+        /* PAGE 1 */
+        #start-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fdf6f0; z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease-in-out, visibility 1s; perspective: 800px; }
+        #background-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
+        .bg-item { position: absolute; top: 110%; opacity: 0; animation: riseUp linear infinite; }
+        @keyframes riseUp { 0% { top: 110%; transform: rotate(0deg); opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { top: -20%; transform: rotate(360deg); opacity: 0; } }
         
-        .bg-item { 
-            position: absolute; top: 110%; opacity: 0; 
-            animation: riseUp linear infinite; 
-        }
-
-        @keyframes riseUp {
-            0% { top: 110%; transform: rotate(0deg); opacity: 0; }
-            10% { opacity: 0.8; } 90% { opacity: 0.8; }
-            100% { top: -20%; transform: rotate(360deg); opacity: 0; }
-        }
-
-        .invite-text {
-            position: relative; z-index: 10;
-            font-family: 'Patrick Hand', cursive; color: #5c4d42; font-size: 1.8rem;
-            text-align: center; margin-bottom: 70px; line-height: 1.4; max-width: 85%;
-            pointer-events: none; text-shadow: 2px 2px 0px rgba(255,255,255,0.6);
-        }
-
-        /* 3D Peel Button */
-        .sticker-wrapper {
-            position: relative; width: 240px; height: 70px; z-index: 20;
-            transform: rotate(-4deg); 
-            box-shadow: 0px 10px 10px rgba(92, 77, 66, 0.1);
-            border-radius: 50px; background: rgba(0,0,0,0.05);
-        }
-
-        .sticker {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            transform-style: preserve-3d; transform-origin: left center;
-            transition: transform 0.1s; cursor: grab; border-radius: 50px;
-        }
-        .sticker:active { cursor: grabbing; }
-
-        .face {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            backface-visibility: hidden; border-radius: 50px;
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Patrick Hand', cursive; font-size: 1.8rem;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.1); border: 2px solid #5c4d42;
-        }
-
+        .invite-text { position: relative; z-index: 10; font-family: 'Patrick Hand', cursive; color: #5c4d42; font-size: 1.8rem; text-align: center; margin-bottom: 70px; line-height: 1.4; max-width: 85%; pointer-events: none; text-shadow: 2px 2px 0px rgba(255,255,255,0.6); }
+        .sticker-wrapper { position: relative; width: 240px; height: 70px; z-index: 20; transform: rotate(-4deg); box-shadow: 0px 10px 10px rgba(92, 77, 66, 0.1); border-radius: 50px; background: rgba(0,0,0,0.05); }
+        .sticker { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform-style: preserve-3d; transform-origin: left center; transition: transform 0.1s; border-radius: 50px; }
+        .face { position: absolute; top: 0; left: 0; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 50px; display: flex; align-items: center; justify-content: center; font-family: 'Patrick Hand', cursive; font-size: 1.8rem; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); border: 2px solid #5c4d42; }
         .face-front { background: var(--sticker-front); color: #5c4d42; z-index: 2; }
         .face-back { background: var(--sticker-back); color: #d4a373; transform: rotateY(180deg); box-shadow: inset 0 0 10px rgba(0,0,0,0.1); }
-
         .doodle-arrow { position: absolute; left: -50px; top: 20px; font-size: 2rem; color: #5c4d42; transform: rotate(-15deg); animation: bounceX 1s infinite alternate; font-family: 'Patrick Hand', cursive; pointer-events: none; }
         .doodle-sparkle { position: absolute; right: -30px; top: -30px; font-size: 2rem; color: #d4a373; animation: pulse 1.5s infinite; pointer-events: none; }
-
         @keyframes bounceX { from { transform: translateX(0) rotate(-15deg); } to { transform: translateX(-10px) rotate(-15deg); } }
         @keyframes pulse { 0% { opacity: 0.5; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0.5; transform: scale(0.8); } }
 
-        /* ================= PAGE 2: MEADOW (UI) ================= */
+        /* PAGE 2 UI */
         #page2-ui { display: none; opacity: 0; transition: opacity 1s; }
-
-        /* MOVED TO TOP */
-        #page2-title {
-            position: fixed; top: 15%; left: 50%; transform: translate(-50%, -50%);
-            font-family: 'Patrick Hand', cursive; font-size: 2rem; 
-            color: #5c4d42; opacity: 1; pointer-events: none; 
-            transition: opacity 1.5s ease-out; width: 100%; text-align: center;
-            z-index: 50; 
-        }
-
+        #page2-title { position: fixed; top: 15%; left: 50%; transform: translate(-50%, -50%); font-family: 'Patrick Hand', cursive; font-size: 2rem; color: #5c4d42; opacity: 1; pointer-events: none; transition: opacity 1.5s ease-out; width: 100%; text-align: center; z-index: 50; }
         .credits-container { position: fixed; top: 25px; right: 25px; z-index: 2000; display: flex; flex-direction: column; align-items: flex-end; }
-        .credits-btn { background: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.6); padding: 8px 18px; border-radius: 30px; color: var(--text); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; cursor: pointer; backdrop-filter: blur(8px); }
+        .credits-btn { background: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.6); padding: 8px 18px; border-radius: 30px; color: var(--text); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; backdrop-filter: blur(8px); }
         .credits-dropdown { margin-top: 15px; background: rgba(255,255,255,0.95); border-radius: 20px; padding: 20px; min-width: 140px; opacity: 0; transform: translateY(-10px); pointer-events: none; transition: 0.3s; position: absolute; top: 40px; right: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .credits-dropdown.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
         .credit-item { margin-bottom: 8px; font-size: 0.7rem; color: #999; border-bottom: 1px solid #eee; padding-bottom: 4px; }
         .credit-name { display: block; color: var(--text); font-weight: 600; font-size: 0.85rem; }
-
-        /* HOVER MENU */
+        
         .menu-container { position: fixed; bottom: 30px; right: 30px; z-index: 3000; display: flex; flex-direction: column-reverse; align-items: center; gap: 15px; }
-        .main-menu-btn { width: 65px; height: 65px; background: #4a3b32; color: #fffcf2; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 8px 20px rgba(74, 59, 50, 0.3); cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 3002; pointer-events: auto; }
-        /* Removed .main-menu-btn:active click effect to prefer hover logic */
-        
+        .main-menu-btn { width: 65px; height: 65px; background: #4a3b32; color: #fffcf2; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 8px 20px rgba(74, 59, 50, 0.3); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 3002; pointer-events: auto; }
         .tool-list { display: flex; flex-direction: column-reverse; gap: 12px; align-items: center; margin-bottom: 5px; pointer-events: none; }
-        .tool-btn { width: 50px; height: 50px; background: rgba(255,255,255,0.9); border: 1px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05); backdrop-filter: blur(5px); opacity: 0; transform: translateY(20px) scale(0.8); transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); cursor: pointer; pointer-events: auto; }
+        .tool-btn { width: 50px; height: 50px; background: rgba(255,255,255,0.9); border: 1px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05); backdrop-filter: blur(5px); opacity: 0; transform: translateY(20px) scale(0.8); transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); pointer-events: auto; }
         
-        /* Menu Open States */
         .menu-open .tool-btn { opacity: 1; transform: translateY(0) scale(1); }
         .menu-open .main-menu-btn { transform: rotate(45deg); background: #d64933; }
-        
-        .menu-open .tool-btn:nth-child(1) { transition-delay: 0.05s; } 
-        .menu-open .tool-btn:nth-child(2) { transition-delay: 0.1s; } 
-        .menu-open .tool-btn:nth-child(3) { transition-delay: 0.15s; } 
-        .menu-open .tool-btn:nth-child(4) { transition-delay: 0.2s; }
-
-        /* Active Tool State (for Eraser) */
+        .menu-open .tool-btn:nth-child(1) { transition-delay: 0.05s; } .menu-open .tool-btn:nth-child(2) { transition-delay: 0.1s; } .menu-open .tool-btn:nth-child(3) { transition-delay: 0.15s; } .menu-open .tool-btn:nth-child(4) { transition-delay: 0.2s; }
         .tool-btn.active-tool { background: #ff6b6b; color: white; border-color: #ff6b6b; transform: scale(1.1) !important; }
-
-        .next-btn {
-            position: fixed; bottom: 30px; left: 30px; z-index: 4000;
-            background: white; border: 2px solid var(--text); padding: 12px 25px;
-            border-radius: 20px; font-family: 'Patrick Hand', cursive; font-size: 1.2rem;
-            box-shadow: 3px 3px 0px var(--primary); cursor: pointer;
-            transform: rotate(-2deg); transition: transform 0.2s;
-        }
+        
+        .next-btn { position: fixed; bottom: 30px; left: 30px; z-index: 4000; background: white; border: 2px solid var(--text); padding: 12px 25px; border-radius: 20px; font-family: 'Patrick Hand', cursive; font-size: 1.2rem; box-shadow: 3px 3px 0px var(--primary); transform: rotate(-2deg); transition: transform 0.2s; }
         .next-btn:active { transform: rotate(-2deg) scale(0.95); }
 
-        /* ================= PAGE 3 (INTERMEDIATE) ================= */
-        #intermediate-page {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 7000; background: var(--bg);
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.8s;
-            background-image: linear-gradient(var(--paper-lines) 1px, transparent 1px);
-            background-size: 100% 35px;
-        }
-        .intermediate-text {
-            font-family: 'Patrick Hand', cursive; font-size: 1.8rem;
-            color: var(--text); text-align: center; margin-bottom: 50px; padding: 0 20px;
-            max-width: 85%; line-height: 1.5;
-        }
-
-        /* ================= PAGE 4 (FINAL QUESTION) ================= */
-        #question-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 8000; background: var(--bg);
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.8s;
-            background-image: linear-gradient(var(--paper-lines) 1px, transparent 1px);
-            background-size: 100% 35px;
-            transition: background 1s;
-        }
-
+        /* PAGES 3 & 4 */
+        #intermediate-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 7000; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.8s; background-image: linear-gradient(var(--paper-lines) 1px, transparent 1px); background-size: 100% 35px; }
+        .intermediate-text { font-family: 'Patrick Hand', cursive; font-size: 1.8rem; color: var(--text); text-align: center; margin-bottom: 50px; padding: 0 20px; max-width: 85%; line-height: 1.5; }
+        #question-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 8000; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.8s; background-image: linear-gradient(var(--paper-lines) 1px, transparent 1px); background-size: 100% 35px; transition: background 1s; }
         .bg-envelopes { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; z-index: -1; }
         .floating-envelope { position: absolute; font-size: 2rem; opacity: 0.3; animation: floatEnv 10s infinite linear; }
         @keyframes floatEnv { 0% { transform: translateY(110vh) rotate(0deg); opacity:0; } 20% {opacity:0.4;} 80% {opacity:0.4;} 100% { transform: translateY(-10vh) rotate(20deg); opacity:0; } }
-
-        .question-text {
-            font-family: 'Patrick Hand', cursive; font-size: 2.5rem;
-            color: var(--text); text-align: center; margin-bottom: 50px;
-            max-width: 80%; line-height: 1.2;
-            animation: breathe 3s ease-in-out infinite; 
-        }
+        .question-text { font-family: 'Patrick Hand', cursive; font-size: 2.5rem; color: var(--text); text-align: center; margin-bottom: 50px; max-width: 80%; line-height: 1.2; animation: breathe 3s ease-in-out infinite; }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-
         .option-group { display: flex; flex-wrap: wrap; justify-content: center; max-width: 320px; gap: 15px; }
-
-        .option-sticker {
-            padding: 12px 25px; border: 2px solid var(--text);
-            background: white; font-family: 'Patrick Hand', cursive; font-size: 1.3rem;
-            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-            cursor: pointer; transition: transform 0.2s;
-            box-shadow: 3px 3px 0px rgba(0,0,0,0.1); user-select: none;
-        }
+        .option-sticker { padding: 12px 25px; border: 2px solid var(--text); background: white; font-family: 'Patrick Hand', cursive; font-size: 1.3rem; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; transition: transform 0.2s; box-shadow: 3px 3px 0px rgba(0,0,0,0.1); user-select: none; }
         .option-sticker:active { transform: scale(0.9) !important; }
-        
         #btn-nah { position: relative; transition: top 0.2s, left 0.2s; } 
-
-        #final-msg {
-            margin-top: 40px; font-family: 'Patrick Hand', cursive;
-            font-size: 1.6rem; color: #d4a373; text-align: center;
-            min-height: 50px; padding: 0 20px;
-        }
-
-        /* --- FLICKERING GLOW ANIMATION --- */
-        .glowing-text {
-            color: #fff;
-            text-align: center;
-            font-family: 'Patrick Hand', cursive;
-            font-size: 3rem;
-            line-height: 1.4;
-            /* Base State */
-            text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #bc13fe, 0 0 82px #bc13fe;
-            animation: flicker 2s infinite;
-        }
-
-        @keyframes flicker {
-            0%, 18%, 22%, 25%, 53%, 57%, 100% {
-                text-shadow: 
-                    0 0 4px #fff,
-                    0 0 11px #fff,
-                    0 0 19px #fff,
-                    0 0 40px #bc13fe,
-                    0 0 80px #bc13fe,
-                    0 0 90px #bc13fe;
-                opacity: 1;
-            }
-            20%, 24%, 55% {
-                text-shadow: none;
-                opacity: 0.4;
-            }
-        }
-
+        #final-msg { margin-top: 40px; font-family: 'Patrick Hand', cursive; font-size: 1.6rem; color: #d4a373; text-align: center; min-height: 50px; padding: 0 20px; }
+        
+        .glowing-text { color: #fff; text-align: center; font-family: 'Patrick Hand', cursive; font-size: 3rem; line-height: 1.4; text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #bc13fe, 0 0 82px #bc13fe; animation: flicker 2s infinite; }
+        @keyframes flicker { 0%, 18%, 22%, 25%, 53%, 57%, 100% { text-shadow: 0 0 4px #fff, 0 0 11px #fff, 0 0 19px #fff, 0 0 40px #bc13fe, 0 0 80px #bc13fe, 0 0 90px #bc13fe; opacity: 1; } 20%, 24%, 55% { text-shadow: none; opacity: 0.4; } }
         .confetti { position: absolute; pointer-events: none; z-index: 9000; font-size: 1.5rem; }
-
-        /* ================= MODALS & EXTRAS ================= */
+        
+        /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px); opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.open { opacity: 1; }
         .paper-note { background: #fffcf2; width: 80%; max-width: 300px; padding: 30px; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); font-family: 'Patrick Hand', cursive; font-size: 1.3rem; color: #4a3b32; line-height: 1.6; transform: rotate(-2deg); position: relative; }
@@ -241,10 +109,8 @@
         .secret-box { background: #fff; padding: 25px; border-radius: 20px; text-align: center; font-family: 'Inter', sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 250px; }
         .secret-input { width: 80%; padding: 10px; margin: 15px 0; border: 2px solid #eee; border-radius: 10px; font-family: 'Inter', sans-serif; outline: none; }
         .secret-btn { background: #d4a373; color: white; border: none; padding: 8px 20px; border-radius: 15px; font-weight: 600; cursor: pointer; }
-
         #hint { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; color: #d4a373; letter-spacing: 4px; font-size: 0.8rem; z-index: 10; display: none; }
         #music-status { position: fixed; top: 30px; left: 25px; font-size: 0.7rem; color: #d4a373; letter-spacing: 2px; font-weight: 600; text-transform: uppercase; display: none; }
-
         .flower { position: absolute; pointer-events: none; transform: translate(-50%, -50%) scale(0); animation: bloom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; filter: drop-shadow(4px 4px 6px rgba(0,0,0,0.1)); z-index: 10; }
         @keyframes bloom { to { transform: translate(-50%, -50%) scale(1) rotate(var(--r)); } }
         .bubble { position: absolute; background: #fff; padding: 10px 20px; border-radius: 2px 20px 20px 20px; font-family: 'Patrick Hand', cursive; font-size: 1.2rem; color: var(--text); pointer-events: none; animation: floatUpBubble 4s ease-out forwards; z-index: 100; white-space: nowrap; box-shadow: 2px 4px 15px rgba(0,0,0,0.05); transform: rotate(-2deg); }
@@ -252,6 +118,8 @@
     </style>
 </head>
 <body>
+    <div id="custom-cursor"></div>
+
     <div class="grain-overlay"></div>
 
     <div id="start-container">
@@ -268,7 +136,7 @@
         <div style="margin-top: 20px; color:#aaa; font-size:0.7rem; font-family:'Inter'; text-transform:uppercase; letter-spacing:1px; opacity:0.6;">&lt;&lt; PEEL TO OPEN</div>
     </div>
 
-    <div id="page2-ui">
+    <div id="page2-ui" onclick="handleOutsideClick(event)">
         <h2 id="page2-title">What i know about u</h2>
 
         <div class="credits-container" id="creditsContainer">
@@ -281,9 +149,9 @@
         </div>
 
         <div class="menu-container" id="menuContainer" onmouseenter="openMenu()" onmouseleave="closeMenu()">
-            <div class="main-menu-btn">+</div>
+            <div class="main-menu-btn" onclick="toggleMenuMobile(event)">+</div>
             <div class="tool-list" id="toolList">
-                <div class="tool-btn" id="broom-btn" onclick="toggleEraser()">🧹</div>
+                <div class="tool-btn" id="broom-btn" onclick="toggleEraser(event)">🧹</div>
                 <div class="tool-btn" onclick="openLetter()">💌</div>
                 <div class="tool-btn" onclick="openSecretLock()">🔒</div>
                 <div class="tool-btn" onclick="takeScreenshotMode()">📸</div>
@@ -302,7 +170,7 @@
         <div class="bg-envelopes" id="envelopes-layer"></div>
         
         <div id="q-content">
-            <h1 class="question-text">Will you be a my Mitr?</h1>
+            <h1 class="question-text">Will you be my Mitr?</h1>
             <div class="option-group">
                 <div class="option-sticker" style="transform: rotate(-2deg);" onclick="answer('yes')">Yess!</div>
                 <div class="option-sticker" style="transform: rotate(3deg);" onclick="answer('think')">I will think</div>
@@ -344,6 +212,15 @@
     <audio id="bg-audio"></audio>
 
     <script>
+        // --- CUSTOM CURSOR LOGIC ---
+        const cursor = document.getElementById('custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
+        document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
+
         const playlist = ['song1.mp3', 'song2.mp3']; 
         let currentTrack = 0;
         const colors = ['#f8ad9d', '#fbc4ab', '#ffdab9', '#ece4db', '#d8e2dc'];
@@ -354,7 +231,7 @@
         const sticker = document.getElementById('sticker-btn');
         let isStarted = false;
         let isFinalPage = false;
-        let isEraserActive = false; // ERASER STATE
+        let isEraserActive = false;
 
         function initBackground() {
             const container = document.getElementById('background-layer');
@@ -467,7 +344,7 @@
                 
                 audio.pause();
                 
-                const celebration = new Audio('Song3.mp3'); // EXACT FILENAME
+                const celebration = new Audio('Song3.mp3');
                 celebration.volume = 1.0;
                 celebration.play().catch(e => console.log("Audio play error", e));
 
@@ -502,28 +379,30 @@
             }
         }
 
-        // --- MENU HOVER LOGIC ---
-        function openMenu() {
-            const menu = document.getElementById('menuContainer');
-            menu.classList.add('menu-open');
+        // --- MENU LOGIC ---
+        function openMenu() { document.getElementById('menuContainer').classList.add('menu-open'); }
+        function closeMenu() { document.getElementById('menuContainer').classList.remove('menu-open'); }
+        function toggleMenuMobile(e) {
+            e.stopPropagation(); // Prevent immediate closing
+            document.getElementById('menuContainer').classList.toggle('menu-open');
         }
-        function closeMenu() {
-            const menu = document.getElementById('menuContainer');
-            menu.classList.remove('menu-open');
+        function handleOutsideClick(e) {
+            if (!e.target.closest('.menu-container')) {
+                document.getElementById('menuContainer').classList.remove('menu-open');
+            }
         }
 
         // --- ERASER TOGGLE ---
-        function toggleEraser() {
+        function toggleEraser(e) {
+            if(e) e.stopPropagation();
             isEraserActive = !isEraserActive;
             const btn = document.getElementById('broom-btn');
             if(isEraserActive) {
                 btn.classList.add('active-tool');
-                document.body.style.cursor = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path fill=\"red\" d=\"M19.8 12.2L12.2 19.8C11.8 20.2 11.2 20.2 10.8 19.8L2.2 11.2C1.8 10.8 1.8 10.2 2.2 9.8L9.8 2.2C10.2 1.8 10.8 1.8 11.2 2.2L19.8 10.8C20.2 11.2 20.2 11.8 19.8 12.2ZM12 4L4 12L12 20L20 12L12 4Z\"/></svg>') 12 12, auto"; // Cross cursor
                 document.getElementById('hint').innerText = "TAP FLOWER TO ERASE";
                 document.getElementById('hint').style.display = 'block';
             } else {
                 btn.classList.remove('active-tool');
-                document.body.style.cursor = "auto";
                 document.getElementById('hint').innerText = "TAP & DRAG";
                 document.getElementById('hint').style.display = 'none';
             }
@@ -537,25 +416,32 @@
         function toggleCredits(e) { e.stopPropagation(); document.getElementById('creditsMenu').classList.toggle('show'); }
         window.addEventListener('click', (e) => { if (!e.target.closest('.credits-container')) document.getElementById('creditsMenu').classList.remove('show'); });
 
-        // --- FLOWER LOGIC WITH ERASER ---
-        function interact(x, y) {
-            // FADE OUT TITLE ON FIRST INTERACTION
+        // --- INTERACTION HANDLER ---
+        function handleInteraction(x, y) {
+            // Fade out title
             const title = document.getElementById('page2-title');
             if(title && title.style.opacity > 0.1) title.style.opacity = '0';
 
+            // Check if allowable page
             if(document.getElementById('start-container').style.opacity !== '0' && !isStarted) return;
             if(document.getElementById('intermediate-page').style.opacity === '1') return;
 
-            // ERASER MODE
+            // Eraser Mode - Collision Detection
             if(isEraserActive) {
-                const element = document.elementFromPoint(x, y);
-                if(element && element.closest('.flower')) {
-                    element.closest('.flower').remove();
-                }
+                const flowers = document.querySelectorAll('.flower');
+                flowers.forEach(flower => {
+                    const rect = flower.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    const distance = Math.hypot(x - centerX, y - centerY);
+                    if(distance < 50) { // 50px radius eraser
+                        flower.remove();
+                    }
+                });
                 return;
             }
 
-            // CREATE MODE
+            // Create Mode
             createFlower(x, y);
         }
 
@@ -581,24 +467,30 @@
         window.addEventListener('touchmove', (e) => {
             if(!isStarted) return;
             const t = e.touches[0];
-            if(Math.hypot(t.clientX-lastX, t.clientY-lastY)>20) { interact(t.clientX, t.clientY); lastX=t.clientX; lastY=t.clientY; }
+            if(Math.hypot(t.clientX-lastX, t.clientY-lastY)>20) { 
+                handleInteraction(t.clientX, t.clientY); 
+                lastX=t.clientX; lastY=t.clientY; 
+            }
         }, {passive: false});
 
         window.addEventListener('mousemove', (e) => {
             if(!isStarted || e.buttons === 0) return;
-            if(Math.hypot(e.clientX-lastX, e.clientY-lastY)>20) { interact(e.clientX, e.clientY); lastX=e.clientX; lastY=e.clientY; }
+            if(Math.hypot(e.clientX-lastX, e.clientY-lastY)>20) { 
+                handleInteraction(e.clientX, e.clientY); 
+                lastX=e.clientX; lastY=e.clientY; 
+            }
         });
 
         window.addEventListener('touchstart', (e) => {
             if(!isStarted || e.target.closest('button') || e.target.closest('.menu-container') || e.target.closest('.option-sticker') || e.target.closest('.paper-note')) return;
             document.getElementById('hint').style.display='none';
-            interact(e.touches[0].clientX, e.touches[0].clientY);
+            handleInteraction(e.touches[0].clientX, e.touches[0].clientY);
         }, {passive:false});
 
         window.addEventListener('mousedown', (e) => {
             if(!isStarted || e.target.closest('button') || e.target.closest('.menu-container') || e.target.closest('.option-sticker') || e.target.closest('.paper-note')) return;
             document.getElementById('hint').style.display='none';
-            interact(e.clientX, e.clientY);
+            handleInteraction(e.clientX, e.clientY);
         });
 
         initBackground();
