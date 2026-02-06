@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For You ✨</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #fdf6f0;
+            --text: #5c4d42;
+            --glass: rgba(255, 255, 255, 0.6);
+            --paper-lines: rgba(92, 77, 66, 0.08);
+            --ink-color: #4a3b32;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg);
+            background-image: linear-gradient(var(--paper-lines) 1px, transparent 1px);
+            background-size: 100% 35px;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; touch-action: none;
+        }
+
+        /* --- DRAWING CANVAS --- */
+        #drawing-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5; 
+            pointer-events: none; 
+        }
+
+        /* --- VINTAGE GRAIN --- */
+        .grain-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9000; opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* --- START CONTAINER --- */
+        #start-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fdf6f0;
+            z-index: 9999; /* Super high z-index to ensure clicking works */
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s;
+        }
+
+        /* --- REALISTIC GLASS BUTTON --- */
+        #start-btn {
+            position: relative; z-index: 10000; /* Highest priority */
+            background: rgba(255, 255, 255, 0.25); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15), inset 0 0 15px rgba(255, 255, 255, 0.2);
+            color: var(--text); padding: 18px 50px; 
+            font-family: 'Patrick Hand', cursive; font-size: 1.8rem; 
+            cursor: pointer; border-radius: 25px;
+            transform: rotate(-2deg); transition: all 0.3s ease;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+            user-select: none; -webkit-tap-highlight-color: transparent;
+        }
+        #start-btn:active { transform: scale(0.95) rotate(-2deg); background: rgba(255, 255, 255, 0.35); }
+        
+        #loading-text { position: relative; z-index: 10000; margin-top: 30px; font-family: 'Patrick Hand', cursive; color: #888; font-size: 1.2rem; }
+
+        /* --- UI CONTROLS --- */
+        .ui-controls {
+            position: fixed; bottom: 25px; right: 25px; z-index: 2000;
+            display: none; flex-direction: column; gap: 15px;
+        }
+
+        .icon-btn {
+            width: 50px; height: 50px;
+            background: var(--glass);
+            border: 1px solid rgba(255,255,255,0.8);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            backdrop-filter: blur(5px);
+            transition: transform 0.2s, background 0.2s;
+        }
+        .icon-btn:active { transform: scale(0.9); }
+        .icon-btn.active { background: #d4a373; color: white; border-color: #d4a373; }
+
+        /* --- CREDITS --- */
+        .credits-container { position: fixed; top: 25px; right: 25px; z-index: 2000; display: none; flex-direction: column; align-items: flex-end; }
+        .credits-btn { background: var(--glass); border: 1px solid rgba(255,255,255,0.5); padding: 8px 18px; border-radius: 30px; color: var(--text); font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; backdrop-filter: blur(8px); }
+        .credits-dropdown { margin-top: 15px; background: rgba(255,255,255,0.95); border-radius: 20px; padding: 20px; min-width: 140px; opacity: 0; transform: translateY(-10px); pointer-events: none; transition: 0.3s; position: absolute; top: 40px; right: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .credits-dropdown.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .credit-item { margin-bottom: 8px; font-size: 0.7rem; color: #999; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+        .credit-name { display: block; color: var(--text); font-weight: 600; font-size: 0.85rem; }
+
+        /* --- MODALS --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3); z-index: 6000;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(3px); opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.open { opacity: 1; }
+        
+        .paper-note {
+            background: #fffcf2; width: 80%; max-width: 300px;
+            padding: 30px; border-radius: 2px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.3rem; color: #4a3b32; line-height: 1.6;
+            transform: rotate(-2deg); position: relative;
+        }
+        .close-note { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; color: #aaa; cursor: pointer; }
+
+        .secret-box {
+            background: #fff; padding: 25px; border-radius: 20px;
+            text-align: center; font-family: 'Inter', sans-serif;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 250px;
+        }
+        .secret-input {
+            width: 80%; padding: 10px; margin: 15px 0;
+            border: 2px solid #eee; border-radius: 10px;
+            font-family: 'Inter', sans-serif; outline: none;
+        }
+        .secret-btn {
+            background: #d4a373; color: white; border: none;
+            padding: 8px 20px; border-radius: 15px; font-weight: 600; cursor: pointer;
+        }
+
+        #hint { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; color: #d4a373; letter-spacing: 4px; font-size: 0.8rem; z-index: 10; display: none; }
+        #music-status { position: fixed; top: 30px; left: 25px; font-size: 0.7rem; color: #d4a373; letter-spacing: 2px; font-weight: 600; text-transform: uppercase; display: none; }
+
+        .flower { position: absolute; pointer-events: none; transform: translate(-50%, -50%) scale(0); animation: bloom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; filter: drop-shadow(4px 4px 6px rgba(0,0,0,0.1)); z-index: 10; }
+        @keyframes bloom { to { transform: translate(-50%, -50%) scale(1) rotate(var(--r)); } }
+        
+        .bubble { position: absolute; background: #fff; padding: 10px 20px; border-radius: 2px 20px 20px 20px; font-family: 'Patrick Hand', cursive; font-size: 1.2rem; color: var(--text); pointer-events: none; animation: floatUp 4s ease-out forwards; z-index: 100; white-space: nowrap; box-shadow: 2px 4px 15px rgba(0,0,0,0.05); transform: rotate(-2deg); }
+        @keyframes floatUp { 0% { opacity: 0; transform: translate(-50%, 10px) rotate(-2deg); } 15% { opacity: 1; transform: translate(-50%, 0) rotate(-2deg); } 100% { opacity: 0; transform: translate(-50%, -120px) rotate(5deg); } }
+
+        /* Background Motion */
+        #background-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .bg-item { position: absolute; opacity: 0.4; animation: drift linear infinite; }
+        @keyframes drift { from { transform: translateY(110vh) rotate(0deg); } to { transform: translateY(-20vh) rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="grain-overlay"></div>
+    <canvas id="drawing-canvas"></canvas>
+
+    <div id="start-container">
+        <div id="background-layer"></div>
+        <button id="start-btn">Start Here</button> <p id="loading-text" style="display:none;">loading vibes...</p>
+    </div>
+
+    <div class="credits-container" id="creditsContainer">
+        <button class="credits-btn" onclick="toggleCredits(event)">Credits</button>
+        <div class="credits-dropdown" id="creditsMenu">
+            <div class="credit-item"><span class="credit-name">Faizan</span>Director</div>
+            <div class="credit-item"><span class="credit-name">Gemini Pro</span>Writer</div>
+            <div class="credit-item"><span class="credit-name">Time</span>Squeezed out</div>
+        </div>
+    </div>
+
+    <div class="ui-controls" id="uiControls">
+        <div class="icon-btn" onclick="toggleDrawingMode()" id="penBtn">✍️</div>
+        <div class="icon-btn" onclick="clearCanvas()">🧹</div>
+        <div class="icon-btn" onclick="openLetter()">💌</div>
+        <div class="icon-btn" onclick="openSecretLock()">🔒</div>
+        <div class="icon-btn" onclick="takeScreenshotMode()">📸</div>
+    </div>
+
+    <div id="letter-modal" class="modal-overlay" onclick="closeModal('letter-modal')">
+        <div class="paper-note" onclick="event.stopPropagation()">
+            <span class="close-note" onclick="closeModal('letter-modal')">&times;</span>
+            <p>Hey,<br><br>Just wanted to make something as cool as you.<br>Hope this brings a smile to your face!<br><br>- Faizan</p>
+        </div>
+    </div>
+
+    <div id="secret-lock-modal" class="modal-overlay" onclick="closeModal('secret-lock-modal')">
+        <div class="secret-box" onclick="event.stopPropagation()">
+            <span class="close-note" onclick="closeModal('secret-lock-modal')">&times;</span>
+            <h3>Top Secret 🤫</h3>
+            <p style="font-size: 0.8rem; color: #888;">Enter Password:</p>
+            <input type="text" id="secret-pass" class="secret-input" placeholder="???">
+            <button class="secret-btn" onclick="checkPassword()">Unlock</button>
+        </div>
+    </div>
+
+    <div id="secret-content-modal" class="modal-overlay" onclick="closeModal('secret-content-modal')">
+        <div class="paper-note" style="background: #e3f2fd; transform: rotate(1deg);" onclick="event.stopPropagation()">
+            <span class="close-note" onclick="closeModal('secret-content-modal')">&times;</span>
+            <h3 style="text-align:center;">🎉 Access Granted!</h3>
+            <p>(This space is waiting for your secret content...)</p>
+        </div>
+    </div>
+
+    <div id="hint">TAP & DRAG</div>
+    <div id="music-status"></div>
+    <audio id="bg-audio"></audio>
+
+    <script>
+        const playlist = ['song1.mp3', 'song2.mp3']; 
+        let currentTrack = 0;
+        const colors = ['#f8ad9d', '#fbc4ab', '#ffdab9', '#ece4db', '#d8e2dc'];
+        const notes = [
+            "Independent person ✋", "Never sleeps.. 🦉", "Possibly Batwoman? 🤔", "top-tier friend 🏆",
+            "elite music taste 😌", "10/10 human 🌟", "insane vibes ✨", "Nonchalant fr 😬",
+            "Caring 🫂", "Needs to be studied 🧐", "secretly a genius 😎", "Nevers backsoff 👀",
+            "linguistic person 📚"
+        ];
+        
+        const audio = document.getElementById('bg-audio');
+        const startContainer = document.getElementById('start-container');
+        const loadingText = document.getElementById('loading-text');
+        const startBtn = document.getElementById('start-btn');
+        const canvas = document.getElementById('drawing-canvas');
+        const ctx = canvas.getContext('2d');
+        let isStarted = false;
+        let isDrawingMode = false;
+        let isPainting = false;
+
+        // --- BACKGROUND INIT ---
+        function initBackground() {
+            const container = document.getElementById('background-layer');
+            for(let i=0; i<15; i++) {
+                const el = document.createElement('div');
+                el.className = 'bg-item';
+                const size = Math.random() * 60 + 40;
+                if(Math.random() > 0.5) {
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 100 100"><circle cx="50" cy="30" r="25" fill="${color}"/><circle cx="50" cy="70" r="25" fill="${color}"/><circle cx="30" cy="50" r="25" fill="${color}"/><circle cx="70" cy="50" r="25" fill="${color}"/><circle cx="50" cy="50" r="12" fill="#fffcf2"/></svg>`;
+                } else {
+                    el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 100 100" fill="none" stroke="#d4a373" stroke-width="2" stroke-linecap="round"><path d="M10,50 Q30,10 50,50 T90,50" transform="rotate(${Math.random()*360} 50 50)"/></svg>`;
+                }
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                el.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(el);
+            }
+        }
+
+        // --- ROBUST START LOGIC ---
+        // This ensures the page opens even if audio fails
+        startBtn.addEventListener('click', () => {
+            loadingText.style.display = 'block';
+            startBtn.innerText = "Opening...";
+
+            // 1. Try to play audio
+            audio.src = playlist[0];
+            const playPromise = audio.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    // Audio started!
+                    document.getElementById('music-status').innerText = "Vibing... 🎵";
+                    triggerTransition();
+                }).catch(error => {
+                    // Audio blocked or missing? Open anyway!
+                    console.log("Audio play failed, forcing open.");
+                    triggerTransition();
+                });
+            } else {
+                // Fallback for older browsers
+                triggerTransition();
+            }
+
+            // 2. SAFETY TIMER: If music takes too long (0.5s), force open
+            setTimeout(() => {
+                if (!isStarted) {
+                    console.log("Force starting due to timeout");
+                    triggerTransition();
+                }
+            }, 500);
+        });
+
+        function triggerTransition() {
+            if(isStarted) return; // Prevent double trigger
+            startContainer.style.opacity = '0';
+            startContainer.style.visibility = 'hidden';
+            setTimeout(() => {
+                document.getElementById('creditsContainer').style.display = 'flex';
+                document.getElementById('uiControls').style.display = 'flex';
+                document.getElementById('hint').style.display = 'block';
+                document.getElementById('music-status').style.display = 'block';
+                isStarted = true;
+            }, 800);
+        }
+
+        // --- DRAWING ---
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function toggleDrawingMode() {
+            isDrawingMode = !isDrawingMode;
+            const btn = document.getElementById('penBtn');
+            const hint = document.getElementById('hint');
+            if (isDrawingMode) {
+                btn.classList.add('active');
+                canvas.style.pointerEvents = 'auto';
+                hint.innerText = "DRAWING MODE ✏️";
+                hint.style.display = 'block'; setTimeout(() => hint.style.display = 'none', 1500);
+            } else {
+                btn.classList.remove('active');
+                canvas.style.pointerEvents = 'none';
+                hint.innerText = "FLOWER MODE 🌸";
+                hint.style.display = 'block'; setTimeout(() => hint.style.display = 'none', 1500);
+            }
+        }
+        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+        function startPosition(e) { if (!isDrawingMode) return; isPainting = true; draw(e); }
+        function finishedPosition() { isPainting = false; ctx.beginPath(); }
+        function draw(e) {
+            if (!isPainting || !isDrawingMode) return;
+            e.preventDefault();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.strokeStyle = '#4a3b32';
+            ctx.lineTo(clientX, clientY); ctx.stroke(); ctx.beginPath(); ctx.moveTo(clientX, clientY);
+        }
+        canvas.addEventListener('mousedown', startPosition); canvas.addEventListener('mouseup', finishedPosition); canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('touchstart', startPosition, {passive: false}); canvas.addEventListener('touchend', finishedPosition); canvas.addEventListener('touchmove', draw, {passive: false});
+
+        // --- LOCK & MODALS ---
+        function openSecretLock() { const modal = document.getElementById('secret-lock-modal'); modal.style.display = 'flex'; setTimeout(() => modal.classList.add('open'), 10); }
+        function checkPassword() {
+            if (document.getElementById('secret-pass').value === "Im nonchalant") {
+                closeModal('secret-lock-modal');
+                const s = document.getElementById('secret-content-modal');
+                s.style.display = 'flex'; setTimeout(() => s.classList.add('open'), 300);
+            } else { alert("Wrong Password 😬"); }
+        }
+        function openLetter() { const m = document.getElementById('letter-modal'); m.style.display = 'flex'; setTimeout(() => m.classList.add('open'), 10); }
+        function closeModal(id) { const m = document.getElementById(id); m.classList.remove('open'); setTimeout(() => m.style.display = 'none', 300); }
+        function takeScreenshotMode() {
+            const ui = document.querySelectorAll('.ui-controls, .credits-container, #hint, #music-status');
+            ui.forEach(el => el.style.opacity = '0');
+            setTimeout(() => { ui.forEach(el => el.style.opacity = '1'); }, 4000);
+        }
+        function toggleCredits(e) { e.stopPropagation(); document.getElementById('creditsMenu').classList.toggle('show'); }
+        window.addEventListener('click', (e) => { if (!e.target.closest('.credits-container')) document.getElementById('creditsMenu').classList.remove('show'); });
+
+        // --- FLOWERS ---
+        function createFlower(x, y) {
+            if (isDrawingMode) return;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const size = Math.random() * 40 + 50;
+            const rotation = Math.random() * 360;
+            const flower = document.createElement('div');
+            flower.className = 'flower'; flower.style.left = x + 'px'; flower.style.top = y + 'px';
+            flower.style.setProperty('--r', rotation + 'deg');
+            flower.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 100 100"><circle cx="50" cy="30" r="25" fill="${color}" stroke="rgba(0,0,0,0.05)"/><circle cx="50" cy="70" r="25" fill="${color}" stroke="rgba(0,0,0,0.05)"/><circle cx="30" cy="50" r="25" fill="${color}" stroke="rgba(0,0,0,0.05)"/><circle cx="70" cy="50" r="25" fill="${color}" stroke="rgba(0,0,0,0.05)"/><circle cx="50" cy="50" r="12" fill="#fffcf2"/><path d="M50 30 L50 70 M30 50 L70 50" stroke="rgba(0,0,0,0.1)" stroke-width="1.2"/></svg>`;
+            document.body.appendChild(flower);
+            if (Math.random() < 0.4) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                let bubbleTop = y - 60; if (y < 100) bubbleTop = y + 50;
+                bubble.style.left = x + 'px'; bubble.style.top = bubbleTop + 'px';
+                bubble.innerText = notes[Math.floor(Math.random() * notes.length)];
+                document.body.appendChild(bubble);
+                setTimeout(() => bubble.remove(), 4000);
+            }
+            if (document.querySelectorAll('.flower').length > 30) document.querySelector('.flower').remove();
+        }
+
+        let lastX = 0; let lastY = 0;
+        initBackground();
+
+        // Listeners
+        window.addEventListener('mousedown', (e) => { 
+            if(!isStarted || e.target.closest('.credits-btn') || e.target.closest('.icon-btn') || e.target.closest('.secret-box') || e.target.closest('.paper-note')) return; 
+            if(!isDrawingMode) { document.getElementById('hint').style.display='none'; createFlower(e.clientX, e.clientY); }
+            lastX=e.clientX; lastY=e.clientY; 
+        });
+        window.addEventListener('mousemove', (e) => { 
+            if(isStarted && e.buttons>0 && !e.target.closest('.ui-controls') && !isDrawingMode && Math.hypot(e.clientX-lastX, e.clientY-lastY)>40) { 
+                createFlower(e.clientX, e.clientY); lastX=e.clientX; lastY=e.clientY; 
+            }
+        });
+        window.addEventListener('touchstart', (e) => { 
+            if(!isStarted || e.target.closest('.credits-btn') || e.target.closest('.icon-btn') || e.target.closest('.secret-box') || e.target.closest('.paper-note')) return; 
+            if(!isDrawingMode) { document.getElementById('hint').style.display='none'; const t=e.touches[0]; createFlower(t.clientX, t.clientY); }
+            lastX=e.touches[0].clientX; lastY=e.touches[0].clientY; 
+        }, {passive: false});
+        window.addEventListener('touchmove', (e) => { 
+            if(isDrawingMode) return; 
+            if(isStarted && !e.target.closest('.ui-controls')) { 
+                const t=e.touches[0]; 
+                if(Math.hypot(t.clientX-lastX, t.clientY-lastY)>40) { 
+                    createFlower(t.clientX, t.clientY); lastX=t.clientX; lastY=t.clientY; 
+                }
+            }
+        }, {passive: false});
+
+        audio.addEventListener('ended', () => {
+            currentTrack++;
+            if (currentTrack >= playlist.length) currentTrack = 0;
+            audio.src = playlist[currentTrack];
+            audio.play();
+        });
+    </script>
+</body>
+</html>
