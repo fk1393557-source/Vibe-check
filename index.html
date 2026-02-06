@@ -189,24 +189,43 @@
             min-height: 50px; padding: 0 20px;
         }
 
-        /* --- GLOWING TEXT ANIMATION (CLOCKWISE) --- */
+        /* --- GLOWING TEXT ANIMATION (PURPLE PULSE) --- */
         .glowing-text {
             color: #fff;
             text-align: center;
             font-family: 'Patrick Hand', cursive;
-            font-size: 3rem; /* Bigger size */
+            font-size: 3rem;
             line-height: 1.4;
             
-            /* CLOCKWISE TRACKING LIGHT */
-            animation: clock-glow 2s infinite linear;
+            /* STATIC PURPLE GLOW BASE */
+            text-shadow: 
+                0 0 7px #fff,
+                0 0 10px #fff,
+                0 0 21px #fff,
+                0 0 42px #bc13fe,
+                0 0 82px #bc13fe,
+                0 0 92px #bc13fe;
+            
+            animation: purple-pulse 1.5s infinite alternate;
         }
 
-        @keyframes clock-glow {
-            0% { text-shadow: 0 -10px 20px #ff00de, 0 0 10px #fff; } /* Top */
-            25% { text-shadow: 10px 0 20px #ff00de, 0 0 10px #fff; } /* Right */
-            50% { text-shadow: 0 10px 20px #d4a373, 0 0 10px #fff; } /* Bottom */
-            75% { text-shadow: -10px 0 20px #d4a373, 0 0 10px #fff; } /* Left */
-            100% { text-shadow: 0 -10px 20px #ff00de, 0 0 10px #fff; } /* Back to Top */
+        @keyframes purple-pulse {
+            from {
+                text-shadow: 
+                    0 0 7px #fff,
+                    0 0 10px #fff,
+                    0 0 21px #fff,
+                    0 0 42px #bc13fe,
+                    0 0 82px #bc13fe;
+            }
+            to {
+                text-shadow: 
+                    0 0 4px #fff,
+                    0 0 7px #fff,
+                    0 0 18px #fff,
+                    0 0 38px #bc13fe,
+                    0 0 73px #bc13fe;
+            }
         }
 
         .confetti { position: absolute; pointer-events: none; z-index: 9000; font-size: 1.5rem; }
@@ -444,8 +463,8 @@
                 // STOP old music
                 audio.pause();
                 
-                // PLAY new song safely
-                const celebration = new Audio('song3.mp3');
+                // PLAY new song safely with CORRECT filename
+                const celebration = new Audio('Song3.mp3');
                 celebration.volume = 1.0;
                 celebration.play().catch(e => console.log("Audio play error", e));
 
