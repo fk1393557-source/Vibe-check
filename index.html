@@ -100,8 +100,9 @@
         /* ================= PAGE 2: MEADOW (UI) ================= */
         #page2-ui { display: none; opacity: 0; transition: opacity 1s; }
 
+        /* MOVED TO TOP */
         #page2-title {
-            position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            position: fixed; top: 15%; left: 50%; transform: translate(-50%, -50%);
             font-family: 'Patrick Hand', cursive; font-size: 2rem; 
             color: #5c4d42; opacity: 1; pointer-events: none; 
             transition: opacity 1.5s ease-out; width: 100%; text-align: center;
@@ -115,13 +116,25 @@
         .credit-item { margin-bottom: 8px; font-size: 0.7rem; color: #999; border-bottom: 1px solid #eee; padding-bottom: 4px; }
         .credit-name { display: block; color: var(--text); font-weight: 600; font-size: 0.85rem; }
 
+        /* HOVER MENU */
         .menu-container { position: fixed; bottom: 30px; right: 30px; z-index: 3000; display: flex; flex-direction: column-reverse; align-items: center; gap: 15px; }
-        .main-menu-btn { width: 65px; height: 65px; background: #4a3b32; color: #fffcf2; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 8px 20px rgba(74, 59, 50, 0.3); cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 3002; }
-        .main-menu-btn:active { transform: scale(0.9); } .main-menu-btn.open { transform: rotate(45deg); background: #d64933; }
+        .main-menu-btn { width: 65px; height: 65px; background: #4a3b32; color: #fffcf2; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 8px 20px rgba(74, 59, 50, 0.3); cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 3002; pointer-events: auto; }
+        /* Removed .main-menu-btn:active click effect to prefer hover logic */
+        
         .tool-list { display: flex; flex-direction: column-reverse; gap: 12px; align-items: center; margin-bottom: 5px; pointer-events: none; }
         .tool-btn { width: 50px; height: 50px; background: rgba(255,255,255,0.9); border: 1px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05); backdrop-filter: blur(5px); opacity: 0; transform: translateY(20px) scale(0.8); transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); cursor: pointer; pointer-events: auto; }
-        .tool-btn:active { transform: scale(0.95); } .menu-open .tool-btn { opacity: 1; transform: translateY(0) scale(1); }
-        .menu-open .tool-btn:nth-child(1) { transition-delay: 0.05s; } .menu-open .tool-btn:nth-child(2) { transition-delay: 0.1s; } .menu-open .tool-btn:nth-child(3) { transition-delay: 0.15s; } .menu-open .tool-btn:nth-child(4) { transition-delay: 0.2s; }
+        
+        /* Menu Open States */
+        .menu-open .tool-btn { opacity: 1; transform: translateY(0) scale(1); }
+        .menu-open .main-menu-btn { transform: rotate(45deg); background: #d64933; }
+        
+        .menu-open .tool-btn:nth-child(1) { transition-delay: 0.05s; } 
+        .menu-open .tool-btn:nth-child(2) { transition-delay: 0.1s; } 
+        .menu-open .tool-btn:nth-child(3) { transition-delay: 0.15s; } 
+        .menu-open .tool-btn:nth-child(4) { transition-delay: 0.2s; }
+
+        /* Active Tool State (for Eraser) */
+        .tool-btn.active-tool { background: #ff6b6b; color: white; border-color: #ff6b6b; transform: scale(1.1) !important; }
 
         .next-btn {
             position: fixed; bottom: 30px; left: 30px; z-index: 4000;
@@ -189,42 +202,32 @@
             min-height: 50px; padding: 0 20px;
         }
 
-        /* --- GLOWING TEXT ANIMATION (PURPLE PULSE) --- */
+        /* --- FLICKERING GLOW ANIMATION --- */
         .glowing-text {
             color: #fff;
             text-align: center;
             font-family: 'Patrick Hand', cursive;
             font-size: 3rem;
             line-height: 1.4;
-            
-            /* STATIC PURPLE GLOW BASE */
-            text-shadow: 
-                0 0 7px #fff,
-                0 0 10px #fff,
-                0 0 21px #fff,
-                0 0 42px #bc13fe,
-                0 0 82px #bc13fe,
-                0 0 92px #bc13fe;
-            
-            animation: purple-pulse 1.5s infinite alternate;
+            /* Base State */
+            text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #bc13fe, 0 0 82px #bc13fe;
+            animation: flicker 2s infinite;
         }
 
-        @keyframes purple-pulse {
-            from {
-                text-shadow: 
-                    0 0 7px #fff,
-                    0 0 10px #fff,
-                    0 0 21px #fff,
-                    0 0 42px #bc13fe,
-                    0 0 82px #bc13fe;
-            }
-            to {
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
                 text-shadow: 
                     0 0 4px #fff,
-                    0 0 7px #fff,
-                    0 0 18px #fff,
-                    0 0 38px #bc13fe,
-                    0 0 73px #bc13fe;
+                    0 0 11px #fff,
+                    0 0 19px #fff,
+                    0 0 40px #bc13fe,
+                    0 0 80px #bc13fe,
+                    0 0 90px #bc13fe;
+                opacity: 1;
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+                opacity: 0.4;
             }
         }
 
@@ -252,7 +255,8 @@
     <div class="grain-overlay"></div>
 
     <div id="start-container">
-        <div id="background-layer"></div> <h1 class="invite-text">This is an invitation to my<br>possibly future friend : )</h1>
+        <div id="background-layer"></div>
+        <h1 class="invite-text">This is an invitation to my<br>possibly future friend : )</h1>
         <div class="sticker-wrapper">
             <div class="doodle-arrow">➜</div>
             <div class="doodle-sparkle">✨</div>
@@ -276,10 +280,10 @@
             </div>
         </div>
 
-        <div class="menu-container" id="menuContainer">
-            <div class="main-menu-btn" onclick="toggleMenu()">+</div>
+        <div class="menu-container" id="menuContainer" onmouseenter="openMenu()" onmouseleave="closeMenu()">
+            <div class="main-menu-btn">+</div>
             <div class="tool-list" id="toolList">
-                <div class="tool-btn" onclick="clearFlowers()">🧹</div>
+                <div class="tool-btn" id="broom-btn" onclick="toggleEraser()">🧹</div>
                 <div class="tool-btn" onclick="openLetter()">💌</div>
                 <div class="tool-btn" onclick="openSecretLock()">🔒</div>
                 <div class="tool-btn" onclick="takeScreenshotMode()">📸</div>
@@ -350,6 +354,7 @@
         const sticker = document.getElementById('sticker-btn');
         let isStarted = false;
         let isFinalPage = false;
+        let isEraserActive = false; // ERASER STATE
 
         function initBackground() {
             const container = document.getElementById('background-layer');
@@ -460,11 +465,9 @@
                 content.style.display = 'none';
                 msg.innerHTML = '<h1 class="glowing-text">We Officially Now Mitrs ✨</h1>';
                 
-                // STOP old music
                 audio.pause();
                 
-                // PLAY new song safely with CORRECT filename
-                const celebration = new Audio('Song3.mp3');
+                const celebration = new Audio('Song3.mp3'); // EXACT FILENAME
                 celebration.volume = 1.0;
                 celebration.play().catch(e => console.log("Audio play error", e));
 
@@ -499,8 +502,33 @@
             }
         }
 
-        function toggleMenu() { document.getElementById('menuContainer').classList.toggle('menu-open'); document.querySelector('.main-menu-btn').classList.toggle('open'); document.querySelector('.main-menu-btn').innerText = document.querySelector('.main-menu-btn').classList.contains('open')?"×":"+"; }
-        function clearFlowers() { document.querySelectorAll('.flower, .bubble').forEach(el => el.remove()); }
+        // --- MENU HOVER LOGIC ---
+        function openMenu() {
+            const menu = document.getElementById('menuContainer');
+            menu.classList.add('menu-open');
+        }
+        function closeMenu() {
+            const menu = document.getElementById('menuContainer');
+            menu.classList.remove('menu-open');
+        }
+
+        // --- ERASER TOGGLE ---
+        function toggleEraser() {
+            isEraserActive = !isEraserActive;
+            const btn = document.getElementById('broom-btn');
+            if(isEraserActive) {
+                btn.classList.add('active-tool');
+                document.body.style.cursor = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path fill=\"red\" d=\"M19.8 12.2L12.2 19.8C11.8 20.2 11.2 20.2 10.8 19.8L2.2 11.2C1.8 10.8 1.8 10.2 2.2 9.8L9.8 2.2C10.2 1.8 10.8 1.8 11.2 2.2L19.8 10.8C20.2 11.2 20.2 11.8 19.8 12.2ZM12 4L4 12L12 20L20 12L12 4Z\"/></svg>') 12 12, auto"; // Cross cursor
+                document.getElementById('hint').innerText = "TAP FLOWER TO ERASE";
+                document.getElementById('hint').style.display = 'block';
+            } else {
+                btn.classList.remove('active-tool');
+                document.body.style.cursor = "auto";
+                document.getElementById('hint').innerText = "TAP & DRAG";
+                document.getElementById('hint').style.display = 'none';
+            }
+        }
+
         function openLetter() { const m=document.getElementById('letter-modal'); m.style.display='flex'; setTimeout(()=>m.classList.add('open'),10); }
         function openSecretLock() { const m=document.getElementById('secret-lock-modal'); m.style.display='flex'; setTimeout(()=>m.classList.add('open'),10); }
         function closeModal(id) { const m=document.getElementById(id); m.classList.remove('open'); setTimeout(()=>m.style.display='none',300); }
@@ -509,14 +537,29 @@
         function toggleCredits(e) { e.stopPropagation(); document.getElementById('creditsMenu').classList.toggle('show'); }
         window.addEventListener('click', (e) => { if (!e.target.closest('.credits-container')) document.getElementById('creditsMenu').classList.remove('show'); });
 
-        function createFlower(x, y) {
-            // FIX: FADE OUT TITLE ON FIRST INTERACTION
+        // --- FLOWER LOGIC WITH ERASER ---
+        function interact(x, y) {
+            // FADE OUT TITLE ON FIRST INTERACTION
             const title = document.getElementById('page2-title');
             if(title && title.style.opacity > 0.1) title.style.opacity = '0';
 
             if(document.getElementById('start-container').style.opacity !== '0' && !isStarted) return;
             if(document.getElementById('intermediate-page').style.opacity === '1') return;
 
+            // ERASER MODE
+            if(isEraserActive) {
+                const element = document.elementFromPoint(x, y);
+                if(element && element.closest('.flower')) {
+                    element.closest('.flower').remove();
+                }
+                return;
+            }
+
+            // CREATE MODE
+            createFlower(x, y);
+        }
+
+        function createFlower(x, y) {
             const color = colors[Math.floor(Math.random() * colors.length)];
             const size = Math.random() * 40 + 50; 
             const flower = document.createElement('div'); flower.className = 'flower';
@@ -538,24 +581,24 @@
         window.addEventListener('touchmove', (e) => {
             if(!isStarted) return;
             const t = e.touches[0];
-            if(Math.hypot(t.clientX-lastX, t.clientY-lastY)>40) { createFlower(t.clientX, t.clientY); lastX=t.clientX; lastY=t.clientY; }
+            if(Math.hypot(t.clientX-lastX, t.clientY-lastY)>20) { interact(t.clientX, t.clientY); lastX=t.clientX; lastY=t.clientY; }
         }, {passive: false});
 
         window.addEventListener('mousemove', (e) => {
             if(!isStarted || e.buttons === 0) return;
-            if(Math.hypot(e.clientX-lastX, e.clientY-lastY)>40) { createFlower(e.clientX, e.clientY); lastX=e.clientX; lastY=e.clientY; }
+            if(Math.hypot(e.clientX-lastX, e.clientY-lastY)>20) { interact(e.clientX, e.clientY); lastX=e.clientX; lastY=e.clientY; }
         });
 
         window.addEventListener('touchstart', (e) => {
             if(!isStarted || e.target.closest('button') || e.target.closest('.menu-container') || e.target.closest('.option-sticker') || e.target.closest('.paper-note')) return;
             document.getElementById('hint').style.display='none';
-            createFlower(e.touches[0].clientX, e.touches[0].clientY);
+            interact(e.touches[0].clientX, e.touches[0].clientY);
         }, {passive:false});
 
         window.addEventListener('mousedown', (e) => {
             if(!isStarted || e.target.closest('button') || e.target.closest('.menu-container') || e.target.closest('.option-sticker') || e.target.closest('.paper-note')) return;
             document.getElementById('hint').style.display='none';
-            createFlower(e.clientX, e.clientY);
+            interact(e.clientX, e.clientY);
         });
 
         initBackground();
