@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>For You 🎇</title>
+    <title>For You ✨</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
@@ -101,20 +101,7 @@
             animation: fallDownVector linear infinite; 
         }
 
-        /* Page 4 Elements */
-        .falling-envelope { z-index: 1; font-size: 2rem; opacity: 0.3; animation: fallDownEnvelope linear infinite; }
-        
-        .falling-text {
-            position: absolute; top: -50px; 
-            font-family: 'Patrick Hand', cursive; color: #d4a373; font-size: 0.85rem;
-            opacity: 0.5; pointer-events: none; z-index: 1; 
-            white-space: nowrap;
-            animation: fallDownText linear infinite;
-        }
-
         @keyframes fallDownVector { 0% { top: -10%; transform: rotate(0deg); } 100% { top: 110%; transform: rotate(180deg); } }
-        @keyframes fallDownEnvelope { 0% { top: -10%; transform: rotate(0deg); } 100% { top: 110%; transform: rotate(20deg); } }
-        @keyframes fallDownText { 0% { top: -10%; opacity: 0; } 20% { opacity: 0.5; } 90% { opacity: 0.5; } 100% { top: 110%; opacity: 0; } }
 
         .question-text { position: relative; z-index: 50; font-family: 'Patrick Hand', cursive; font-size: 2.5rem; color: var(--text); text-align: center; margin-bottom: 50px; max-width: 80%; line-height: 1.2; animation: breathe 3s ease-in-out infinite; }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
@@ -251,7 +238,6 @@
         let currentTrack = 0;
         const colors = ['#f8ad9d', '#fbc4ab', '#ffdab9', '#ece4db', '#d8e2dc'];
         const notes = [ "Independent person ✋", "Never sleeps.. 🦉", "Possibly Batwoman? 🤔", "top-tier friend 🏆", "elite music taste 😌", "10/10 human 🌟", "insane vibes ✨", "Nonchalant fr 😬", "Caring 🫂", "Needs to be studied 🧐", "secretly a genius 😎", "Nevers backsoff 👀", "linguistic person 📚" ];
-        const rainTexts = [ "the design wasn't nonchalant enough", "I think I'm online 🤔", "do u like it?", "Aaaa.....", "shaba bakhair", "what time is it rn?", "ahh i forgot turn the lights on", "hows the song", "today is 30 july", "no questions?" ];
         const aestheticVectors = ["|", "*", "·", "~", "°", "+"];
 
         const audio = document.getElementById('bg-audio');
@@ -298,42 +284,6 @@
                 vec.style.animationDuration = (Math.random() * 8 + 5) + 's';
                 vec.style.animationDelay = (Math.random() * 5) + 's';
                 container.appendChild(vec);
-            }
-        }
-
-        // --- PAGE 4 RAIN: TEXTS (SIDES) + ENVELOPES (ALL OVER) ---
-        function initFinalRain() {
-            const container = document.getElementById('question-container');
-            
-            // Falling Envelopes (ALL OVER)
-            for(let i=0; i<25; i++) {
-                const env = document.createElement('div'); env.className = 'falling-item falling-envelope';
-                env.innerText = '✉️';
-                // Full Width (0-100vw)
-                env.style.left = Math.random() * 100 + 'vw';
-                env.style.animationDuration = (Math.random()*5 + 8) + 's';
-                env.style.animationDelay = (Math.random()*5) + 's';
-                container.appendChild(env);
-            }
-
-            // Falling Texts (STRICTLY SIDES ONLY)
-            for(let i=0; i<rainTexts.length; i++) {
-                const txt = document.createElement('div'); txt.className = 'falling-text';
-                txt.innerText = rainTexts[i];
-                
-                // Math: Force Left (0-15%) OR Right (85-100%)
-                const r = Math.random(); 
-                let leftPos;
-                if (r < 0.5) { 
-                    leftPos = Math.random() * 15; 
-                } else { 
-                    leftPos = 85 + (Math.random() * 15);
-                }
-                
-                txt.style.left = leftPos + 'vw';
-                txt.style.animationDuration = (Math.random() * 10 + 10) + 's'; 
-                txt.style.animationDelay = (Math.random() * 10) + 's';
-                container.appendChild(txt);
             }
         }
 
@@ -400,7 +350,7 @@
                 setTimeout(() => {
                     q.style.opacity = '1';
                     isFinalPage = true;
-                    initFinalRain(); // PAGE 4: TEXTS + ENVELOPES
+                    // NO RAIN HERE
                 }, 50);
             }, 800);
         }
