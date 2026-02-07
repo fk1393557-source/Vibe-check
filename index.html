@@ -25,55 +25,33 @@
             font-family: 'Inter', sans-serif;
             overflow: hidden; touch-action: none;
             transition: background 1s;
-            cursor: none; /* Hide Default System Cursor */
+            cursor: none;
         }
 
-        /* --- 🖍️ HAND-DRAWN DOODLE CURSOR --- */
+        /* --- 🖍️ DOODLE CURSOR --- */
         #doodle-cursor {
             position: fixed; top: 0; left: 0; width: 35px; height: 35px;
             pointer-events: none; z-index: 9999;
-            
-            /* SVG: Sketchy Arrow with Black Outline & White Fill */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='35' height='35' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffffff' stroke='%23000000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M5.5 2.5l7.5 18l3.5-7.5l7.5-2l-18.5-8.5z'/%3E%3C/svg%3E");
             background-size: contain; background-repeat: no-repeat;
-            
-            /* Pivot point at the tip of the arrow */
             transform-origin: top left;
-            
-            /* Subtle 'Breathing' Animation */
             animation: breathe-cursor 2s ease-in-out infinite;
         }
+        @keyframes breathe-cursor { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        #doodle-cursor.hovering { animation: none; transform: rotate(-15deg) scale(1.1); filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1)); }
+        #doodle-cursor.clicking { transform: scale(0.9); }
+        button, .sticker, .tool-btn, .main-menu-btn, .option-sticker, .credits-btn, .next-btn, a { cursor: none !important; }
 
-        @keyframes breathe-cursor {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        /* Hover State (When over buttons) */
-        #doodle-cursor.hovering {
-            animation: none;
-            transform: rotate(-15deg) scale(1.1); /* Tilt to point */
-            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1));
-        }
-
-        /* Click State */
-        #doodle-cursor.clicking {
-            transform: scale(0.9);
-        }
-
-        /* Force Hide Default Cursor on Everything */
-        button, .sticker, .tool-btn, .main-menu-btn, .option-sticker, .credits-btn, .next-btn, a, input {
-            cursor: none !important;
-        }
-
-        /* --- REST OF CSS --- */
+        /* --- GENERAL UI --- */
         .grain-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9000; opacity: 0.05; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
         
         #start-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fdf6f0; z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease-in-out, visibility 1s; perspective: 800px; }
         #background-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
+        
+        /* Rising BG Items (Page 1 Only) */
         .bg-item { position: absolute; top: 110%; opacity: 0; animation: riseUp linear infinite; }
         @keyframes riseUp { 0% { top: 110%; transform: rotate(0deg); opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { top: -20%; transform: rotate(360deg); opacity: 0; } }
-        
+
         .invite-text { position: relative; z-index: 10; font-family: 'Patrick Hand', cursive; color: #5c4d42; font-size: 1.8rem; text-align: center; margin-bottom: 70px; line-height: 1.4; max-width: 85%; pointer-events: none; text-shadow: 2px 2px 0px rgba(255,255,255,0.6); }
         .sticker-wrapper { position: relative; width: 240px; height: 70px; z-index: 20; transform: rotate(-4deg); box-shadow: 0px 10px 10px rgba(92, 77, 66, 0.1); border-radius: 50px; background: rgba(0,0,0,0.05); }
         .sticker { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform-style: preserve-3d; transform-origin: left center; transition: transform 0.1s; border-radius: 50px; }
@@ -105,20 +83,37 @@
         .next-btn { position: fixed; bottom: 30px; left: 30px; z-index: 4000; background: white; border: 2px solid var(--text); padding: 12px 25px; border-radius: 20px; font-family: 'Patrick Hand', cursive; font-size: 1.2rem; box-shadow: 3px 3px 0px var(--primary); transform: rotate(-2deg); transition: transform 0.2s; }
         .next-btn:active { transform: rotate(-2deg) scale(0.95); }
 
-        /* PAGES 3 & 4 */
-        #intermediate-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 7000; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.8s; background-image: linear-gradient(var(--paper-lines) 1px, transparent 1px); background-size: 100% 35px; }
-        .intermediate-text { font-family: 'Patrick Hand', cursive; font-size: 1.8rem; color: var(--text); text-align: center; margin-bottom: 50px; padding: 0 20px; max-width: 85%; line-height: 1.5; }
-        #question-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 8000; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.8s; background-image: linear-gradient(var(--paper-lines) 1px, transparent 1px); background-size: 100% 35px; transition: background 1s; }
-        .bg-envelopes { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; z-index: -1; }
-        .floating-envelope { position: absolute; font-size: 2rem; opacity: 0.3; animation: floatEnv 10s infinite linear; }
-        @keyframes floatEnv { 0% { transform: translateY(110vh) rotate(0deg); opacity:0; } 20% {opacity:0.4;} 80% {opacity:0.4;} 100% { transform: translateY(-10vh) rotate(20deg); opacity:0; } }
-        .question-text { font-family: 'Patrick Hand', cursive; font-size: 2.5rem; color: var(--text); text-align: center; margin-bottom: 50px; max-width: 80%; line-height: 1.2; animation: breathe 3s ease-in-out infinite; }
+        /* PAGES 3 & 4 (Rain Effects) */
+        #intermediate-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 7000; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.8s; background-image: linear-gradient(var(--paper-lines) 1px, transparent 1px); background-size: 100% 35px; overflow: hidden; }
+        .intermediate-text { position: relative; z-index: 10; font-family: 'Patrick Hand', cursive; font-size: 1.8rem; color: var(--text); text-align: center; margin-bottom: 50px; padding: 0 20px; max-width: 85%; line-height: 1.5; }
+        
+        #question-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 8000; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.8s; background-image: linear-gradient(var(--paper-lines) 1px, transparent 1px); background-size: 100% 35px; transition: background 1s; overflow: hidden; }
+        
+        /* RAIN ELEMENTS */
+        .falling-item { position: absolute; top: -100px; pointer-events: none; }
+        .falling-flower { z-index: 1; opacity: 0.7; animation: fallDown linear infinite; }
+        .falling-string { z-index: 0; width: 1px; background: rgba(92, 77, 66, 0.2); animation: fallDown linear infinite; }
+        .falling-envelope { z-index: 1; font-size: 2rem; opacity: 0.3; animation: fallDownEnvelope linear infinite; }
+        
+        .falling-text {
+            position: absolute; top: -50px; 
+            font-family: 'Patrick Hand', cursive; color: #d4a373; font-size: 0.9rem;
+            opacity: 0.6; pointer-events: none; z-index: 2;
+            white-space: nowrap;
+            animation: fallDownText linear infinite;
+        }
+
+        @keyframes fallDown { 0% { top: -10%; transform: rotate(0deg); } 100% { top: 110%; transform: rotate(360deg); } }
+        @keyframes fallDownEnvelope { 0% { top: -10%; transform: rotate(0deg); } 100% { top: 110%; transform: rotate(20deg); } }
+        @keyframes fallDownText { 0% { top: -10%; opacity: 0; } 20% { opacity: 0.6; } 90% { opacity: 0.6; } 100% { top: 110%; opacity: 0; } }
+
+        .question-text { position: relative; z-index: 50; font-family: 'Patrick Hand', cursive; font-size: 2.5rem; color: var(--text); text-align: center; margin-bottom: 50px; max-width: 80%; line-height: 1.2; animation: breathe 3s ease-in-out infinite; }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        .option-group { display: flex; flex-wrap: wrap; justify-content: center; max-width: 320px; gap: 15px; }
+        .option-group { position: relative; z-index: 50; display: flex; flex-wrap: wrap; justify-content: center; max-width: 320px; gap: 15px; }
         .option-sticker { padding: 12px 25px; border: 2px solid var(--text); background: white; font-family: 'Patrick Hand', cursive; font-size: 1.3rem; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; transition: transform 0.2s; box-shadow: 3px 3px 0px rgba(0,0,0,0.1); user-select: none; }
         .option-sticker:active { transform: scale(0.9) !important; }
         #btn-nah { position: relative; transition: top 0.2s, left 0.2s; } 
-        #final-msg { margin-top: 40px; font-family: 'Patrick Hand', cursive; font-size: 1.6rem; color: #d4a373; text-align: center; min-height: 50px; padding: 0 20px; }
+        #final-msg { margin-top: 40px; font-family: 'Patrick Hand', cursive; font-size: 1.6rem; color: #d4a373; text-align: center; min-height: 50px; padding: 0 20px; position:relative; z-index:50; }
         .glowing-text { color: #fff; text-align: center; font-family: 'Patrick Hand', cursive; font-size: 3rem; line-height: 1.4; text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #bc13fe, 0 0 82px #bc13fe; animation: flicker 2s infinite; }
         @keyframes flicker { 0%, 18%, 22%, 25%, 53%, 57%, 100% { text-shadow: 0 0 4px #fff, 0 0 11px #fff, 0 0 19px #fff, 0 0 40px #bc13fe, 0 0 80px #bc13fe, 0 0 90px #bc13fe; opacity: 1; } 20%, 24%, 55% { text-shadow: none; opacity: 0.4; } }
         .confetti { position: absolute; pointer-events: none; z-index: 9000; font-size: 1.5rem; }
@@ -140,7 +135,6 @@
 </head>
 <body>
     <div id="doodle-cursor"></div>
-
     <div class="grain-overlay"></div>
 
     <div id="start-container">
@@ -184,12 +178,10 @@
 
     <div id="intermediate-page">
         <p class="intermediate-text">So that's all i know about u & i bet theres more , but before that i got a question to ask u....</p>
-        <button class="next-btn" style="position:relative; bottom:0; margin-top:30px;" onclick="goToFinalQuestion()">Ask me ➜</button>
+        <button class="next-btn" style="position:relative; bottom:0; margin-top:30px; z-index:50;" onclick="goToFinalQuestion()">Ask me ➜</button>
     </div>
 
     <div id="question-container">
-        <div class="bg-envelopes" id="envelopes-layer"></div>
-        
         <div id="q-content">
             <h1 class="question-text">Will you be a my Mitr?</h1>
             <div class="option-group">
@@ -233,23 +225,16 @@
     <audio id="bg-audio"></audio>
 
     <script>
-        // --- CUSTOM DOODLE CURSOR LOGIC ---
+        // --- DOODLE CURSOR LOGIC ---
         const cursor = document.getElementById('doodle-cursor');
-        
-        // Track mouse movement
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
-            
-            // Check if hovering over a clickable element
             const hovered = document.elementFromPoint(e.clientX, e.clientY);
             if (hovered && (hovered.tagName === 'BUTTON' || hovered.classList.contains('sticker') || hovered.classList.contains('tool-btn') || hovered.classList.contains('option-sticker') || hovered.classList.contains('main-menu-btn'))) {
                 cursor.classList.add('hovering');
-            } else {
-                cursor.classList.remove('hovering');
-            }
+            } else { cursor.classList.remove('hovering'); }
         });
-
         document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
         document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
 
@@ -257,7 +242,8 @@
         let currentTrack = 0;
         const colors = ['#f8ad9d', '#fbc4ab', '#ffdab9', '#ece4db', '#d8e2dc'];
         const notes = [ "Independent person ✋", "Never sleeps.. 🦉", "Possibly Batwoman? 🤔", "top-tier friend 🏆", "elite music taste 😌", "10/10 human 🌟", "insane vibes ✨", "Nonchalant fr 😬", "Caring 🫂", "Needs to be studied 🧐", "secretly a genius 😎", "Nevers backsoff 👀", "linguistic person 📚" ];
-        
+        const rainTexts = [ "the design wasn't nonchalant enough", "I think I'm online 🤔", "do u like it?", "Aaaa.....", "shaba bakhair", "what time is it rn?", "ahh i forgot turn the lights on", "hows the song", "today is 30 july", "no questions?" ];
+
         const audio = document.getElementById('bg-audio');
         const startContainer = document.getElementById('start-container');
         const sticker = document.getElementById('sticker-btn');
@@ -266,18 +252,16 @@
         let isEraserActive = false;
 
         // --- GLOBAL AUDIO UNLOCKER ---
-        // This ensures music triggers on the VERY FIRST click anywhere on the screen
         document.body.addEventListener('click', () => {
             if (audio.paused && !isFinalPage) {
                 audio.src = playlist[0];
                 audio.play().catch(e => console.log("Waiting for interaction...", e));
             }
-        }, { once: true }); // Runs only once
+        }, { once: true });
 
         function initBackground() {
             const container = document.getElementById('background-layer');
-            const itemCount = 50; 
-            for(let i=0; i<itemCount; i++) {
+            for(let i=0; i<50; i++) {
                 const el = document.createElement('div'); el.className = 'bg-item';
                 const size = Math.random() * 40 + 30; 
                 if(Math.random() > 0.5) {
@@ -293,16 +277,74 @@
             }
         }
 
+        // --- RAIN LOGIC FOR PAGE 3 ---
+        function initIntermediateRain() {
+            const container = document.getElementById('intermediate-page');
+            for(let i=0; i<30; i++) {
+                const flower = document.createElement('div');
+                flower.className = 'falling-item falling-flower';
+                const size = Math.random() * 30 + 20;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                flower.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="${color}" opacity="0.6"/></svg>`;
+                flower.style.left = Math.random() * 100 + 'vw';
+                flower.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                flower.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(flower);
+
+                if (Math.random() > 0.5) {
+                    const string = document.createElement('div');
+                    string.className = 'falling-item falling-string';
+                    string.style.height = (Math.random() * 100 + 50) + 'px';
+                    string.style.left = (parseFloat(flower.style.left) + 10) + 'px'; // Near flower
+                    string.style.animationDuration = flower.style.animationDuration;
+                    string.style.animationDelay = flower.style.animationDelay;
+                    container.appendChild(string);
+                }
+            }
+        }
+
+        // --- SIDE CASCADE FOR PAGE 4 ---
+        function initFinalRain() {
+            const container = document.getElementById('question-container');
+            
+            // Falling Envelopes
+            for(let i=0; i<15; i++) {
+                const env = document.createElement('div'); env.className = 'falling-item falling-envelope';
+                env.innerText = '✉️';
+                // Random position but weighted towards sides
+                const r = Math.random();
+                const x = r < 0.5 ? r * 20 : 80 + (r * 20); // 0-20% or 80-100%
+                env.style.left = x + 'vw';
+                env.style.animationDuration = (Math.random()*5 + 8) + 's';
+                env.style.animationDelay = (Math.random()*5) + 's';
+                container.appendChild(env);
+            }
+
+            // Falling Texts (Side Cascade)
+            for(let i=0; i<rainTexts.length; i++) {
+                const txt = document.createElement('div'); txt.className = 'falling-text';
+                txt.innerText = rainTexts[i];
+                // Math to force Left or Right side (avoid middle)
+                const r = Math.random(); 
+                let leftPos;
+                if (r < 0.5) { leftPos = Math.random() * 15; } // 0% to 15%
+                else { leftPos = 85 + (Math.random() * 15); } // 85% to 100%
+                
+                txt.style.left = leftPos + 'vw';
+                txt.style.animationDuration = (Math.random() * 10 + 10) + 's'; // Slow fall
+                txt.style.animationDelay = (Math.random() * 10) + 's';
+                container.appendChild(txt);
+            }
+        }
+
         let isDragging = false, startX = 0;
         function startDrag(e) { 
             if(isStarted) return; 
             isDragging = true; 
             startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX; 
             sticker.style.transition = 'none';
-            // Force play on touch start
             if (audio.paused) { audio.src = playlist[0]; audio.play(); }
         }
-        
         function drag(e) {
             if(!isDragging || isStarted) return;
             const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
@@ -322,9 +364,7 @@
             sticker.style.transition = 'all 0.8s ease-in'; 
             sticker.style.transform = 'rotateY(-180deg) translateX(-100px) scale(1.1)'; 
             sticker.style.opacity = '0';
-            
             if (audio.paused) { audio.src = playlist[0]; audio.play(); }
-
             setTimeout(() => {
                 startContainer.style.opacity = '0';
                 startContainer.style.visibility = 'hidden';
@@ -344,7 +384,10 @@
                 document.getElementById('page2-ui').style.display = 'none';
                 const inter = document.getElementById('intermediate-page');
                 inter.style.display = 'flex';
-                setTimeout(() => inter.style.opacity = '1', 50);
+                setTimeout(() => {
+                    inter.style.opacity = '1';
+                    initIntermediateRain(); // Start Rain
+                }, 50);
             }, 800);
         }
 
@@ -354,30 +397,19 @@
                 document.getElementById('intermediate-page').style.display = 'none';
                 const q = document.getElementById('question-container');
                 q.style.display = 'flex';
-                setTimeout(() => q.style.opacity = '1', 50);
-                isFinalPage = true;
-                initEnvelopes();
+                setTimeout(() => {
+                    q.style.opacity = '1';
+                    isFinalPage = true;
+                    initFinalRain(); // Start Cascade
+                }, 50);
             }, 800);
-        }
-
-        function initEnvelopes() {
-            const h = document.getElementById('envelopes-layer');
-            for(let i=0; i<15; i++) {
-                const env = document.createElement('div'); env.className = 'floating-envelope';
-                env.innerText = '✉️';
-                env.style.left = Math.random()*100 + 'vw';
-                env.style.animationDuration = (Math.random()*5 + 8) + 's';
-                h.appendChild(env);
-            }
         }
 
         function moveNah() {
             const btn = document.getElementById('btn-nah');
             const x = Math.random() * (window.innerWidth - 120);
             const y = Math.random() * (window.innerHeight - 100);
-            btn.style.position = 'fixed';
-            btn.style.left = x + 'px';
-            btn.style.top = y + 'px';
+            btn.style.position = 'fixed'; btn.style.left = x + 'px'; btn.style.top = y + 'px';
         }
 
         function answer(type) {
@@ -390,15 +422,11 @@
                 container.style.backgroundImage = "none";
                 content.style.display = 'none';
                 msg.innerHTML = '<h1 class="glowing-text">We Officially Now Mitrs ✨</h1>';
-                
                 audio.pause();
-                
                 const celebration = new Audio('Song3.mp3');
                 celebration.volume = 1.0;
                 celebration.play().catch(e => console.log("Audio play error", e));
-
                 explodeConfetti();
-                
             } else if(type === 'think') {
                 msg.innerText = "Take your time, I'm not going anywhere 😌";
                 msg.style.color = "#d4a373";
@@ -411,8 +439,7 @@
         function explodeConfetti() {
             const particles = ['🌸', '✉️', '❤️', '✨', '💌', '👍'];
             for(let i=0; i<300; i++) {
-                const c = document.createElement('div'); 
-                c.className = 'confetti';
+                const c = document.createElement('div'); c.className = 'confetti';
                 c.innerText = particles[Math.floor(Math.random() * particles.length)];
                 c.style.left = '50%'; c.style.top = '50%';
                 c.style.fontSize = Math.random()*20 + 10 + 'px';
@@ -420,10 +447,7 @@
                 const destX = (Math.random() - 0.5) * window.innerWidth * 1.5;
                 const destY = (Math.random() - 0.5) * window.innerHeight * 1.5;
                 const rotation = Math.random() * 720;
-                const anim = c.animate([
-                    { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
-                    { transform: `translate(${destX}px, ${destY}px) rotate(${rotation}deg)`, opacity: 0 }
-                ], { duration: 1500 + Math.random()*2000, easing: 'cubic-bezier(0.25, 1, 0.5, 1)' });
+                const anim = c.animate([ { transform: 'translate(0,0) rotate(0deg)', opacity: 1 }, { transform: `translate(${destX}px, ${destY}px) rotate(${rotation}deg)`, opacity: 0 } ], { duration: 1500 + Math.random()*2000, easing: 'cubic-bezier(0.25, 1, 0.5, 1)' });
                 anim.onfinish = () => c.remove();
             }
         }
