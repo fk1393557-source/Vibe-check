@@ -197,11 +197,12 @@
         /* --- CONFETTI (EMOJIS) --- */
         .confetti { position: absolute; pointer-events: none; z-index: 9000; font-size: 1.5rem; }
 
-        /* --- NEW SPARKLE HOVER EFFECT --- */
+        /* --- NEW SPARKLE HOVER EFFECT (BIGGER & AROUND) --- */
         .hover-sparkle {
             position: absolute;
             pointer-events: none;
-            width: 20px; height: 20px;
+            /* BIGGER SIZE */
+            width: 50px; height: 50px; 
             background-image: url('spark.png');
             background-size: contain;
             background-repeat: no-repeat;
@@ -402,7 +403,7 @@
             if (sparkleInterval) return;
             sparkleInterval = setInterval(() => {
                 createHoverSparkle(btnYes);
-            }, 20); // Fast spawning
+            }, 20); 
         }
 
         function stopSparkles() {
@@ -416,15 +417,15 @@
             const sparkle = document.createElement('div');
             sparkle.className = 'hover-sparkle';
             
-            // Spawn random position inside button
+            // Random spawn point inside button
             const x = rect.left + Math.random() * rect.width;
             const y = rect.top + Math.random() * rect.height;
             sparkle.style.left = x + 'px';
             sparkle.style.top = y + 'px';
             
-            // Random outward direction
+            // INCREASED VELOCITY FOR "AROUND" EFFECT
             const angle = Math.random() * Math.PI * 2;
-            const velocity = 50 + Math.random() * 50; 
+            const velocity = 80 + Math.random() * 80; // Faster/Further
             const tx = Math.cos(angle) * velocity + 'px';
             const ty = Math.sin(angle) * velocity + 'px';
             
@@ -452,11 +453,10 @@
             spawnTrail(t.clientX, t.clientY);
         });
 
+        // --- CURSOR TRAIL LOGIC (DISABLED ON PAGE 2) ---
         function spawnTrail(x, y) {
-            const p2 = document.getElementById('page2');
-            const p3 = document.getElementById('page3');
-            // ONLY SPAWN ON PAGE 3 & 4
-            if (p2.classList.contains('active') || document.getElementById('page1').classList.contains('active')) return;
+            // ONLY SPAWN ON PAGE 3 & 4 (Not on Page 1 or 2)
+            if (document.getElementById('page2').classList.contains('active') || document.getElementById('page1').classList.contains('active')) return;
 
             const trail = document.createElement('div');
             trail.className = 'cursor-trail';
@@ -521,7 +521,9 @@
             if (pageId === 'page2') {
                 document.getElementById('hint').style.display = 'block';
                 document.getElementById('music-status').style.display = 'block';
+                // ANIMATED DOTS
                 document.getElementById('music-status').innerHTML = "Vibing<span class='typing-dots'></span> 🎵";
+                
                 document.querySelectorAll('.falling-item').forEach(i => i.remove());
             }
             if (pageId === 'page3') {
@@ -646,7 +648,6 @@
             
             document.getElementById('q-nav').style.display = 'none'; 
             
-            // === STOP HOVER SPARKLES ===
             stopSparkles();
 
             if(type === 'yes') {
@@ -691,7 +692,6 @@
         }
 
         function explodeConfetti() {
-            // === EMOJIS FOR CONFETTI ===
             const particles = ['🌸', '✉️', '❤️', '✨', '💌', '👍'];
             for(let i=0; i<300; i++) {
                 const c = document.createElement('div'); c.className = 'confetti';
