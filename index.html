@@ -25,10 +25,10 @@
             font-family: 'Inter', sans-serif;
             overflow: hidden; touch-action: none;
             transition: background 1s;
-            cursor: none; /* Hide default cursor */
+            cursor: none; 
         }
 
-        /* --- 🖍️ SMOOTH DOODLE CURSOR --- */
+        /* --- 🖍️ DOODLE CURSOR --- */
         #doodle-cursor {
             position: fixed; top: 0; left: 0; width: 28px; height: 28px;
             pointer-events: none; z-index: 9999;
@@ -37,17 +37,16 @@
             transform-origin: top left;
             animation: breathe-cursor 2s ease-in-out infinite;
         }
-        @keyframes breathe-cursor { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
-        #doodle-cursor.hovering { animation: none; transform: rotate(-15deg) scale(1.1); filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1)); }
-        #doodle-cursor.clicking { transform: scale(0.9); }
-        
-        /* Show cursor on desktop, hide on mobile but keep trail */
         @media (pointer: coarse) {
             #doodle-cursor { display: none !important; }
             body, html { cursor: auto; } 
         }
+        @keyframes breathe-cursor { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+        #doodle-cursor.hovering { animation: none; transform: rotate(-15deg) scale(1.1); filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1)); }
+        #doodle-cursor.clicking { transform: scale(0.9); }
+        button, .sticker, .tool-btn, .main-menu-btn, .option-sticker, .credits-btn, .nav-btn, a { cursor: none !important; }
 
-        /* --- CURSOR TRAIL PARTICLES --- */
+        /* --- CURSOR TRAIL --- */
         .cursor-trail {
             position: fixed; pointer-events: none;
             width: 6px; height: 6px;
@@ -57,7 +56,7 @@
         }
         @keyframes fadeTrail { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(0); opacity: 0; margin-top: 10px; } }
 
-        /* --- PAGE TRANSITIONS (Robust Fade) --- */
+        /* --- SMART PAGE TRANSITIONS --- */
         .page-section {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             opacity: 0; pointer-events: none; visibility: hidden;
@@ -68,9 +67,31 @@
             opacity: 1; pointer-events: auto; visibility: visible; z-index: 20;
         }
 
-        /* --- UI ELEMENTS --- */
-        button, .sticker, .tool-btn, .main-menu-btn, .option-sticker, .credits-btn, .nav-btn, a { cursor: none !important; -webkit-tap-highlight-color: transparent; }
+        /* DEFAULT (Mobile) - Slide Full Screen */
+        .paper-slide-out { animation: slideOutMobile 0.6s ease-in-out forwards; }
+        .paper-slide-in { animation: slideInMobile 0.6s ease-in-out forwards; }
+        .paper-slide-out-rev { animation: slideOutRevMobile 0.6s ease-in-out forwards; }
+        .paper-slide-in-rev { animation: slideInRevMobile 0.6s ease-in-out forwards; }
 
+        @keyframes slideOutMobile { 0% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(-100%); opacity: 0; } }
+        @keyframes slideInMobile { 0% { transform: translateX(100%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+        @keyframes slideOutRevMobile { 0% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(100%); opacity: 0; } }
+        @keyframes slideInRevMobile { 0% { transform: translateX(-100%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+
+        /* DESKTOP - Gentle Nudge (Fixes the "Way Off" issue) */
+        @media (min-width: 768px) {
+            .paper-slide-out { animation: slideOutDesktop 0.6s ease-in-out forwards; }
+            .paper-slide-in { animation: slideInDesktop 0.6s ease-in-out forwards; }
+            .paper-slide-out-rev { animation: slideOutRevDesktop 0.6s ease-in-out forwards; }
+            .paper-slide-in-rev { animation: slideInRevDesktop 0.6s ease-in-out forwards; }
+
+            @keyframes slideOutDesktop { 0% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(-50px); opacity: 0; } }
+            @keyframes slideInDesktop { 0% { transform: translateX(50px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+            @keyframes slideOutRevDesktop { 0% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(50px); opacity: 0; } }
+            @keyframes slideInRevDesktop { 0% { transform: translateX(-50px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+        }
+
+        /* --- UI ELEMENTS --- */
         .grain-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9000; opacity: 0.05; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
         #start-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fdf6f0; z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease-in-out, visibility 1s; perspective: 800px; }
         #background-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
@@ -135,13 +156,30 @@
             color: #d8b4e2; font-size: 0.9rem; opacity: 0.5; pointer-events: none; z-index: 55; 
             white-space: nowrap; animation: fallDownText linear infinite;
         }
-        .particle { position: absolute; background: white; border-radius: 50%; pointer-events: none; z-index: 52; opacity: 0; animation: floatUpParticle linear infinite; }
+        
+        /* --- STAR PARTICLES (Replaces white dots) --- */
+        .particle { 
+            position: absolute; 
+            pointer-events: none; 
+            z-index: 52; 
+            opacity: 0; 
+            animation: floatUpParticle linear infinite; 
+            
+            /* Use YOUR Image Here */
+            background-image: url('star.png'); 
+            background-size: contain; 
+            background-repeat: no-repeat;
+            background-color: transparent; 
+            
+            /* SAFETY NET: Removes black background if PNG isn't transparent */
+            mix-blend-mode: screen; 
+        }
 
         @keyframes fallDownVector { 0% { top: -10%; transform: rotate(0deg); } 100% { top: 110%; transform: rotate(180deg); } }
         @keyframes fallDownEnvelope { 0% { top: -10%; transform: rotate(0deg); } 100% { top: 110%; transform: rotate(20deg); } }
         @keyframes fallDownCelebration { 0% { top: -10%; transform: rotate(0deg); opacity: 0; } 20% { opacity: 0.4; } 100% { top: 110%; transform: rotate(-10deg); opacity: 0; } }
         @keyframes fallDownText { 0% { top: -10%; opacity: 0; } 15% { opacity: 0.5; } 85% { opacity: 0.5; } 100% { top: 110%; opacity: 0; } }
-        @keyframes floatUpParticle { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 20% { opacity: 0.6; } 80% { opacity: 0.6; } 100% { transform: translateY(-10vh) scale(1); opacity: 0; } }
+        @keyframes floatUpParticle { 0% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 20% { opacity: 0.8; } 80% { opacity: 0.8; } 100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; } }
 
         .final-glow { font-family: 'Patrick Hand', cursive; font-size: 3rem; color: #fff; text-align: center; line-height: 1.4; text-shadow: 0 0 15px rgba(255, 255, 255, 0.2), 0 0 30px rgba(188, 19, 254, 0.4); animation: softPulse 5s ease-in-out infinite; position: relative; z-index: 60; padding: 0 20px; }
         @keyframes softPulse { 0%, 100% { transform: scale(1); opacity: 0.95; } 50% { transform: scale(1.02); opacity: 1; } }
