@@ -56,7 +56,7 @@
         }
         @keyframes fadeTrail { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(0); opacity: 0; margin-top: 10px; } }
 
-        /* --- SMART PAGE TRANSITIONS --- */
+        /* --- PAGE TRANSITIONS --- */
         .page-section {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             opacity: 0; pointer-events: none; visibility: hidden;
@@ -67,7 +67,7 @@
             opacity: 1; pointer-events: auto; visibility: visible; z-index: 20;
         }
 
-        /* DEFAULT (Mobile) - Slide Full Screen */
+        /* DEFAULT (Mobile) */
         .paper-slide-out { animation: slideOutMobile 0.6s ease-in-out forwards; }
         .paper-slide-in { animation: slideInMobile 0.6s ease-in-out forwards; }
         .paper-slide-out-rev { animation: slideOutRevMobile 0.6s ease-in-out forwards; }
@@ -78,7 +78,7 @@
         @keyframes slideOutRevMobile { 0% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(100%); opacity: 0; } }
         @keyframes slideInRevMobile { 0% { transform: translateX(-100%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
 
-        /* DESKTOP - Gentle Nudge (Fixes the "Way Off" issue) */
+        /* DESKTOP */
         @media (min-width: 768px) {
             .paper-slide-out { animation: slideOutDesktop 0.6s ease-in-out forwards; }
             .paper-slide-in { animation: slideInDesktop 0.6s ease-in-out forwards; }
@@ -131,7 +131,7 @@
         .menu-open .main-menu-btn { transform: rotate(45deg); background: #d64933; }
         .menu-open .tool-btn:nth-child(1) { transition-delay: 0.05s; } .menu-open .tool-btn:nth-child(2) { transition-delay: 0.1s; } .menu-open .tool-btn:nth-child(3) { transition-delay: 0.15s; } .menu-open .tool-btn:nth-child(4) { transition-delay: 0.2s; }
         
-        /* NAVIGATION TEXT BUTTONS (Z-Index 1000) */
+        /* NAVIGATION TEXT BUTTONS */
         .nav-group { position: fixed; bottom: 30px; left: 30px; z-index: 1000; display: flex; gap: 15px; align-items: center; pointer-events: auto; }
         .nav-btn { 
             background: white; border: 2px solid var(--text); padding: 10px 20px; 
@@ -157,23 +157,17 @@
             white-space: nowrap; animation: fallDownText linear infinite;
         }
         
-        /* --- STAR PARTICLES (Replaces white dots) --- */
+        /* --- STAR PARTICLES (FALLING RAIN ONLY) --- */
         .particle { 
-            position: absolute; 
-            pointer-events: none; 
-            z-index: 52; 
-            opacity: 0; 
+            position: absolute; pointer-events: none; z-index: 52; opacity: 0; 
             animation: floatUpParticle linear infinite; 
-            
-            /* Use YOUR Image Here */
             background-image: url('star.png'); 
-            background-size: contain; 
-            background-repeat: no-repeat;
-            background-color: transparent; 
-            
-            /* SAFETY NET: Removes black background if PNG isn't transparent */
+            background-size: contain; background-repeat: no-repeat; background-color: transparent; 
             mix-blend-mode: screen; 
         }
+        
+        /* --- CONFETTI (EMOJIS ONLY) --- */
+        .confetti { position: absolute; pointer-events: none; z-index: 9000; font-size: 1.5rem; }
 
         @keyframes fallDownVector { 0% { top: -10%; transform: rotate(0deg); } 100% { top: 110%; transform: rotate(180deg); } }
         @keyframes fallDownEnvelope { 0% { top: -10%; transform: rotate(0deg); } 100% { top: 110%; transform: rotate(20deg); } }
@@ -190,8 +184,6 @@
         .option-sticker:active { transform: scale(0.9) !important; }
         #btn-nah { position: relative; transition: top 0.2s, left 0.2s; } 
         #final-msg { margin-top: 40px; font-family: 'Patrick Hand', cursive; font-size: 1.6rem; color: #d4a373; text-align: center; min-height: 50px; padding: 0 20px; position:relative; z-index:50; }
-        
-        .confetti { position: absolute; pointer-events: none; z-index: 9000; font-size: 1.5rem; }
         
         /* FLOWERS (PASSIVE - CLICKS GO THROUGH) */
         .flower { 
@@ -348,7 +340,8 @@
         function spawnTrail(x, y) {
             const p2 = document.getElementById('page2');
             const p3 = document.getElementById('page3');
-            if (!p2.classList.contains('active') && !p3.classList.contains('active')) return;
+            // ONLY SPAWN ON PAGE 3 & 4 (Not on Page 1 or 2)
+            if (p2.classList.contains('active') || document.getElementById('page1').classList.contains('active')) return;
 
             const trail = document.createElement('div');
             trail.className = 'cursor-trail';
@@ -490,7 +483,7 @@
             for(let i=0; i<40; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
-                const size = Math.random() * 3 + 2;
+                const size = Math.random() * 20 + 10; // Bigger stars
                 p.style.width = size + 'px'; p.style.height = size + 'px';
                 p.style.left = Math.random() * 100 + 'vw';
                 p.style.animationDuration = (Math.random() * 10 + 10) + 's';
@@ -569,6 +562,7 @@
         }
 
         function explodeConfetti() {
+            // === BACK TO EMOJIS FOR EXPLOSION ===
             const particles = ['🌸', '✉️', '❤️', '✨', '💌', '👍'];
             for(let i=0; i<300; i++) {
                 const c = document.createElement('div'); c.className = 'confetti';
