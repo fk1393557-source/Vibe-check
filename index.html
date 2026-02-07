@@ -42,13 +42,29 @@
         #doodle-cursor.clicking { transform: scale(0.9); }
         button, .sticker, .tool-btn, .main-menu-btn, .option-sticker, .credits-btn, .next-btn, a { cursor: none !important; }
 
+        /* --- PAPER TRANSITIONS (New!) --- */
+        .paper-slide-out {
+            animation: slideOut 0.8s ease-in-out forwards;
+        }
+        .paper-slide-in {
+            animation: slideIn 0.8s ease-in-out forwards;
+        }
+
+        @keyframes slideOut {
+            0% { transform: translateX(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateX(-120%) rotate(-10deg); opacity: 0.8; }
+        }
+        @keyframes slideIn {
+            0% { transform: translateX(120%) rotate(10deg); opacity: 0.8; }
+            100% { transform: translateX(0) rotate(0deg); opacity: 1; }
+        }
+
         /* --- GENERAL UI --- */
         .grain-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9000; opacity: 0.05; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
         
         #start-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fdf6f0; z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease-in-out, visibility 1s; perspective: 800px; }
         #background-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
         
-        /* Rising BG Items (Page 1 Only) */
         .bg-item { position: absolute; top: 110%; opacity: 0; animation: riseUp linear infinite; }
         @keyframes riseUp { 0% { top: 110%; transform: rotate(0deg); opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { top: -20%; transform: rotate(360deg); opacity: 0; } }
 
@@ -95,13 +111,17 @@
         /* Page 3 Vectors */
         .falling-vector { 
             font-family: 'Patrick Hand', cursive; 
-            color: rgba(92, 77, 66, 0.3); /* Low opacity */
+            color: rgba(92, 77, 66, 0.3); 
             font-size: 1.5rem; 
             z-index: 1; 
             animation: fallDownVector linear infinite; 
         }
 
+        /* Page 4 Elements */
+        .falling-envelope { z-index: 1; font-size: 2rem; opacity: 0.3; animation: fallDownEnvelope linear infinite; }
+        
         @keyframes fallDownVector { 0% { top: -10%; transform: rotate(0deg); } 100% { top: 110%; transform: rotate(180deg); } }
+        @keyframes fallDownEnvelope { 0% { top: -10%; transform: rotate(0deg); } 100% { top: 110%; transform: rotate(20deg); } }
 
         .question-text { position: relative; z-index: 50; font-family: 'Patrick Hand', cursive; font-size: 2.5rem; color: var(--text); text-align: center; margin-bottom: 50px; max-width: 80%; line-height: 1.2; animation: breathe 3s ease-in-out infinite; }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
@@ -287,6 +307,23 @@
             }
         }
 
+        // --- PAGE 4 RAIN: ENVELOPES (ALL OVER) ---
+        function initFinalRain() {
+            const container = document.getElementById('question-container');
+            
+            // Falling Envelopes (ALL OVER)
+            for(let i=0; i<25; i++) {
+                const env = document.createElement('div'); env.className = 'falling-item falling-envelope';
+                env.innerText = '✉️';
+                // Full Width (0-100vw)
+                env.style.left = Math.random() * 100 + 'vw';
+                env.style.animationDuration = (Math.random()*5 + 8) + 's';
+                env.style.animationDelay = (Math.random()*5) + 's';
+                container.appendChild(env);
+            }
+            // NO TEXTS HERE ANYMORE
+        }
+
         let isDragging = false, startX = 0;
         function startDrag(e) { 
             if(isStarted) return; 
@@ -327,31 +364,30 @@
             }, 800);
         }
 
+        // --- PAPER SLIDE TRANSITIONS ---
         function goToIntermediate() {
-            document.getElementById('page2-ui').style.opacity = '0';
+            const current = document.getElementById('page2-ui');
+            current.classList.add('paper-slide-out');
             document.getElementById('hint').style.display = 'none';
             setTimeout(() => {
-                document.getElementById('page2-ui').style.display = 'none';
-                const inter = document.getElementById('intermediate-page');
-                inter.style.display = 'flex';
-                setTimeout(() => {
-                    inter.style.opacity = '1';
-                    initVectorRain(); // PAGE 3: VECTORS ONLY
-                }, 50);
+                current.style.display = 'none';
+                const next = document.getElementById('intermediate-page');
+                next.style.display = 'flex';
+                next.classList.add('paper-slide-in');
+                initVectorRain();
             }, 800);
         }
 
         function goToFinalQuestion() {
-            document.getElementById('intermediate-page').style.opacity = '0';
+            const current = document.getElementById('intermediate-page');
+            current.classList.add('paper-slide-out'); // Reuse exit
             setTimeout(() => {
-                document.getElementById('intermediate-page').style.display = 'none';
-                const q = document.getElementById('question-container');
-                q.style.display = 'flex';
-                setTimeout(() => {
-                    q.style.opacity = '1';
-                    isFinalPage = true;
-                    // NO RAIN HERE
-                }, 50);
+                current.style.display = 'none';
+                const next = document.getElementById('question-container');
+                next.style.display = 'flex';
+                next.classList.add('paper-slide-in');
+                isFinalPage = true;
+                initFinalRain();
             }, 800);
         }
 
