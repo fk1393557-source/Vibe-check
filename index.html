@@ -448,6 +448,7 @@
                 document.getElementById('hint').style.display = 'block';
                 document.getElementById('music-status').style.display = 'block';
                 document.getElementById('music-status').innerText = "Vibing... 🎵";
+                // Clear any falling items if coming back
                 document.querySelectorAll('.falling-item').forEach(i => i.remove());
             }
             if (pageId === 'page3') {
@@ -580,11 +581,25 @@
                 // === REPLACED TEXT SPARKLE WITH MUSIC ICON ===
                 msg.innerHTML = '<h1 class="final-glow">We’re officially friends now <img src="music.png" class="music-icon"></h1>';
                 
+                // === FADE IN AUDIO ===
                 audio.pause();
                 const celebration = new Audio('Song3.mp3');
-                celebration.volume = 1.0;
+                
+                // FADE LOGIC: Start 20%, +30% every 2s
+                let vol = 0.2;
+                celebration.volume = vol;
+                
                 celebration.play().catch(e => console.log("Audio play error", e));
                 
+                const fadeInterval = setInterval(() => {
+                    if (vol < 1.0) {
+                        vol = Math.min(vol + 0.3, 1.0); // +0.3, max 1.0
+                        celebration.volume = vol;
+                    } else {
+                        clearInterval(fadeInterval);
+                    }
+                }, 2000); // 2000ms = 2 seconds
+
                 celebration.onended = function() {
                     const nextSong = new Audio('song4.mp3');
                     nextSong.play().catch(e => console.log("Song 4 error", e));
