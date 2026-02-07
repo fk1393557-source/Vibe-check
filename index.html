@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>For You ✨</title>
+    <title>for u ✨</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
@@ -25,18 +25,50 @@
             font-family: 'Inter', sans-serif;
             overflow: hidden; touch-action: none;
             transition: background 1s;
-            
-            /* --- 🖱️ LINUX MINT STYLE CURSOR (Static SVG) --- */
-            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23000000' stroke='%23ffffff' stroke-width='1.5' d='M5.5 3.269L10.154 20.635L12.923 14.231L19.327 11.462L5.5 3.269Z'/%3E%3C/svg%3E"), auto;
+            cursor: none; /* Hide Default System Cursor */
         }
 
-        /* --- POINTER CURSOR (Hand) FOR BUTTONS --- */
-        button, .sticker, .tool-btn, .main-menu-btn, .option-sticker, .credits-btn, .next-btn {
-            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23000000' stroke='%23ffffff' stroke-width='1.5' d='M14 4c0-1.1-.9-2-2-2s-2 .9-2 2v6H9c-1.1 0-2 .9-2 2v8h12v-8c0-1.1-.9-2-2-2h-1V4z'/%3E%3C/svg%3E"), pointer !important;
+        /* --- 🖍️ HAND-DRAWN DOODLE CURSOR --- */
+        #doodle-cursor {
+            position: fixed; top: 0; left: 0; width: 35px; height: 35px;
+            pointer-events: none; z-index: 9999;
+            
+            /* SVG: Sketchy Arrow with Black Outline & White Fill */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='35' height='35' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffffff' stroke='%23000000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M5.5 2.5l7.5 18l3.5-7.5l7.5-2l-18.5-8.5z'/%3E%3C/svg%3E");
+            background-size: contain; background-repeat: no-repeat;
+            
+            /* Pivot point at the tip of the arrow */
+            transform-origin: top left;
+            
+            /* Subtle 'Breathing' Animation */
+            animation: breathe-cursor 2s ease-in-out infinite;
+        }
+
+        @keyframes breathe-cursor {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Hover State (When over buttons) */
+        #doodle-cursor.hovering {
+            animation: none;
+            transform: rotate(-15deg) scale(1.1); /* Tilt to point */
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1));
+        }
+
+        /* Click State */
+        #doodle-cursor.clicking {
+            transform: scale(0.9);
+        }
+
+        /* Force Hide Default Cursor on Everything */
+        button, .sticker, .tool-btn, .main-menu-btn, .option-sticker, .credits-btn, .next-btn, a, input {
+            cursor: none !important;
         }
 
         /* --- REST OF CSS --- */
         .grain-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9000; opacity: 0.05; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+        
         #start-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fdf6f0; z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease-in-out, visibility 1s; perspective: 800px; }
         #background-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
         .bg-item { position: absolute; top: 110%; opacity: 0; animation: riseUp linear infinite; }
@@ -91,7 +123,6 @@
         @keyframes flicker { 0%, 18%, 22%, 25%, 53%, 57%, 100% { text-shadow: 0 0 4px #fff, 0 0 11px #fff, 0 0 19px #fff, 0 0 40px #bc13fe, 0 0 80px #bc13fe, 0 0 90px #bc13fe; opacity: 1; } 20%, 24%, 55% { text-shadow: none; opacity: 0.4; } }
         .confetti { position: absolute; pointer-events: none; z-index: 9000; font-size: 1.5rem; }
         
-        /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 9000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px); opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.open { opacity: 1; }
         .paper-note { background: #fffcf2; width: 80%; max-width: 300px; padding: 30px; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); font-family: 'Patrick Hand', cursive; font-size: 1.3rem; color: #4a3b32; line-height: 1.6; transform: rotate(-2deg); position: relative; }
@@ -108,6 +139,8 @@
     </style>
 </head>
 <body>
+    <div id="doodle-cursor"></div>
+
     <div class="grain-overlay"></div>
 
     <div id="start-container">
@@ -200,6 +233,26 @@
     <audio id="bg-audio"></audio>
 
     <script>
+        // --- CUSTOM DOODLE CURSOR LOGIC ---
+        const cursor = document.getElementById('doodle-cursor');
+        
+        // Track mouse movement
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            // Check if hovering over a clickable element
+            const hovered = document.elementFromPoint(e.clientX, e.clientY);
+            if (hovered && (hovered.tagName === 'BUTTON' || hovered.classList.contains('sticker') || hovered.classList.contains('tool-btn') || hovered.classList.contains('option-sticker') || hovered.classList.contains('main-menu-btn'))) {
+                cursor.classList.add('hovering');
+            } else {
+                cursor.classList.remove('hovering');
+            }
+        });
+
+        document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
+        document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
+
         const playlist = ['song1.mp3', 'song2.mp3']; 
         let currentTrack = 0;
         const colors = ['#f8ad9d', '#fbc4ab', '#ffdab9', '#ece4db', '#d8e2dc'];
@@ -211,6 +264,15 @@
         let isStarted = false;
         let isFinalPage = false;
         let isEraserActive = false;
+
+        // --- GLOBAL AUDIO UNLOCKER ---
+        // This ensures music triggers on the VERY FIRST click anywhere on the screen
+        document.body.addEventListener('click', () => {
+            if (audio.paused && !isFinalPage) {
+                audio.src = playlist[0];
+                audio.play().catch(e => console.log("Waiting for interaction...", e));
+            }
+        }, { once: true }); // Runs only once
 
         function initBackground() {
             const container = document.getElementById('background-layer');
@@ -231,19 +293,14 @@
             }
         }
 
-        // PEEL LOGIC
         let isDragging = false, startX = 0;
         function startDrag(e) { 
             if(isStarted) return; 
             isDragging = true; 
             startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX; 
-            sticker.style.transition = 'none'; 
-            
-            // --- AUDIO WAKE UP (FIX) ---
-            if (audio.paused) {
-                audio.src = playlist[0];
-                audio.play().catch(err => console.log("Audio play prevented:", err));
-            }
+            sticker.style.transition = 'none';
+            // Force play on touch start
+            if (audio.paused) { audio.src = playlist[0]; audio.play(); }
         }
         
         function drag(e) {
@@ -266,8 +323,7 @@
             sticker.style.transform = 'rotateY(-180deg) translateX(-100px) scale(1.1)'; 
             sticker.style.opacity = '0';
             
-            // Re-confirm audio play in case drag didn't trigger it fully
-            if (audio.paused) { audio.play(); }
+            if (audio.paused) { audio.src = playlist[0]; audio.play(); }
 
             setTimeout(() => {
                 startContainer.style.opacity = '0';
@@ -372,20 +428,11 @@
             }
         }
 
-        // --- MENU LOGIC ---
         function openMenu() { document.getElementById('menuContainer').classList.add('menu-open'); }
         function closeMenu() { document.getElementById('menuContainer').classList.remove('menu-open'); }
-        function toggleMenuMobile(e) {
-            e.stopPropagation(); // Prevent immediate closing
-            document.getElementById('menuContainer').classList.toggle('menu-open');
-        }
-        function handleOutsideClick(e) {
-            if (!e.target.closest('.menu-container')) {
-                document.getElementById('menuContainer').classList.remove('menu-open');
-            }
-        }
+        function toggleMenuMobile(e) { e.stopPropagation(); document.getElementById('menuContainer').classList.toggle('menu-open'); }
+        function handleOutsideClick(e) { if (!e.target.closest('.menu-container')) { document.getElementById('menuContainer').classList.remove('menu-open'); } }
 
-        // --- ERASER TOGGLE ---
         function toggleEraser(e) {
             if(e) e.stopPropagation();
             isEraserActive = !isEraserActive;
@@ -409,32 +456,21 @@
         function toggleCredits(e) { e.stopPropagation(); document.getElementById('creditsMenu').classList.toggle('show'); }
         window.addEventListener('click', (e) => { if (!e.target.closest('.credits-container')) document.getElementById('creditsMenu').classList.remove('show'); });
 
-        // --- INTERACTION HANDLER ---
         function handleInteraction(x, y) {
-            // Fade out title
             const title = document.getElementById('page2-title');
             if(title && title.style.opacity > 0.1) title.style.opacity = '0';
-
-            // Check if allowable page
             if(document.getElementById('start-container').style.opacity !== '0' && !isStarted) return;
             if(document.getElementById('intermediate-page').style.opacity === '1') return;
-
-            // Eraser Mode - Collision Detection
             if(isEraserActive) {
                 const flowers = document.querySelectorAll('.flower');
                 flowers.forEach(flower => {
                     const rect = flower.getBoundingClientRect();
                     const centerX = rect.left + rect.width / 2;
                     const centerY = rect.top + rect.height / 2;
-                    const distance = Math.hypot(x - centerX, y - centerY);
-                    if(distance < 50) { // 50px radius eraser
-                        flower.remove();
-                    }
+                    if(Math.hypot(x - centerX, y - centerY) < 50) flower.remove();
                 });
                 return;
             }
-
-            // Create Mode
             createFlower(x, y);
         }
 
@@ -446,7 +482,6 @@
             flower.style.setProperty('--r', Math.random()*360+'deg');
             flower.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 100 100"><circle cx="50" cy="30" r="25" fill="${color}" stroke="rgba(0,0,0,0.05)"/><circle cx="50" cy="70" r="25" fill="${color}" stroke="rgba(0,0,0,0.05)"/><circle cx="30" cy="50" r="25" fill="${color}" stroke="rgba(0,0,0,0.05)"/><circle cx="70" cy="50" r="25" fill="${color}" stroke="rgba(0,0,0,0.05)"/><circle cx="50" cy="50" r="12" fill="#fffcf2"/><path d="M50 30 L50 70 M30 50 L70 50" stroke="rgba(0,0,0,0.1)" stroke-width="1.2"/></svg>`;
             document.body.appendChild(flower);
-            
             if(Math.random() < 0.3) {
                 const b = document.createElement('div'); b.className = 'bubble';
                 b.style.left = x + 'px'; b.style.top = (y-60) + 'px';
@@ -460,26 +495,17 @@
         window.addEventListener('touchmove', (e) => {
             if(!isStarted) return;
             const t = e.touches[0];
-            if(Math.hypot(t.clientX-lastX, t.clientY-lastY)>20) { 
-                handleInteraction(t.clientX, t.clientY); 
-                lastX=t.clientX; lastY=t.clientY; 
-            }
+            if(Math.hypot(t.clientX-lastX, t.clientY-lastY)>20) { handleInteraction(t.clientX, t.clientY); lastX=t.clientX; lastY=t.clientY; }
         }, {passive: false});
-
         window.addEventListener('mousemove', (e) => {
             if(!isStarted || e.buttons === 0) return;
-            if(Math.hypot(e.clientX-lastX, e.clientY-lastY)>20) { 
-                handleInteraction(e.clientX, e.clientY); 
-                lastX=e.clientX; lastY=e.clientY; 
-            }
+            if(Math.hypot(e.clientX-lastX, e.clientY-lastY)>20) { handleInteraction(e.clientX, e.clientY); lastX=e.clientX; lastY=e.clientY; }
         });
-
         window.addEventListener('touchstart', (e) => {
             if(!isStarted || e.target.closest('button') || e.target.closest('.menu-container') || e.target.closest('.option-sticker') || e.target.closest('.paper-note')) return;
             document.getElementById('hint').style.display='none';
             handleInteraction(e.touches[0].clientX, e.touches[0].clientY);
         }, {passive:false});
-
         window.addEventListener('mousedown', (e) => {
             if(!isStarted || e.target.closest('button') || e.target.closest('.menu-container') || e.target.closest('.option-sticker') || e.target.closest('.paper-note')) return;
             document.getElementById('hint').style.display='none';
