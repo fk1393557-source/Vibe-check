@@ -14,7 +14,7 @@
             --paper-lines: rgba(92, 77, 66, 0.08);
             --primary: #d4a373;
             --sticker-front: #fffcf2;
-            --sticker-back: #f4e4bc;
+            --sticker-back: #f4e4bc; /* Creamy adhesive color */
         }
 
         body, html {
@@ -83,7 +83,7 @@
 
         .invite-text { position: relative; z-index: 30; font-family: 'Patrick Hand', cursive; color: #5c4d42; font-size: 1.8rem; text-align: center; margin-bottom: 70px; line-height: 1.4; max-width: 85%; pointer-events: none; text-shadow: 2px 2px 0px rgba(255,255,255,0.6); }
         
-        /* --- 🧩 BI-DIRECTIONAL PEEL STICKER CSS --- */
+        /* --- 🧩 REALISTIC RIGHT-TO-LEFT PEEL --- */
         .sticker-wrapper { 
             position: relative; 
             width: 240px; height: 70px; 
@@ -93,7 +93,7 @@
             user-select: none;
         }
         
-        /* THE BASE: Stays flat */
+        /* THE BASE: Stays adhered to the paper */
         .sticker-flat {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--sticker-front);
@@ -101,64 +101,71 @@
             border-radius: 50px;
             display: flex; align-items: center; justify-content: center;
             font-family: 'Patrick Hand', cursive; font-size: 1.8rem;
+            /* Subtle border/shadow to look "stuck down" rather than floating */
             border: 2px solid #5c4d42;
-            box-shadow: 4px 4px 0px rgba(92, 77, 66, 0.1);
+            box-shadow: 2px 2px 3px rgba(92, 77, 66, 0.15); 
             will-change: clip-path;
         }
 
-        /* THE CURL: The peeling part */
+        /* THE CURL: The back of the sticker peeling off */
         .sticker-curl {
-            position: absolute; top: 0; left: 0;
+            position: absolute; top: 0; 
+            right: 0; /* Anchored to the right side */
             height: 100%;
             width: 0px; 
             background: var(--sticker-back);
+            
+            /* Round the leading edge (left side of curl) */
+            border-radius: 50px 0 0 50px; 
             overflow: hidden;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.15); 
-            display: flex; align-items: center; 
+            
+            /* KEY: Translate 100% moves it to the RIGHT of the anchor point.
+               Since anchor is at 'right: [peelAmount]', this puts the curl
+               exactly into the space we just clipped from the base. 
+            */
+            transform-origin: right center;
+            transform: translateX(100%); 
+            
+            /* Strong shadow on the LEFT edge to simulate lifting */
+            box-shadow: -4px 5px 12px rgba(0,0,0,0.2); 
+            
+            display: flex; align-items: center; justify-content: flex-start; 
             pointer-events: none; 
             z-index: 50;
-            will-change: width, transform, left;
+            will-change: width, right, transform;
         }
 
-        /* Default Left-to-Right Peel Styles */
-        .sticker-curl.peel-left {
-            border-radius: 50px 0 0 50px; 
-            transform-origin: right center;
-            transform: translateX(-100%);
-            justify-content: flex-end; /* Text on right */
-        }
-        
-        /* Right-to-Left Peel Styles */
-        .sticker-curl.peel-right {
-            border-radius: 0 50px 50px 0; 
-            transform-origin: left center;
-            transform: translateX(0); /* Aligned to cut line */
-            justify-content: flex-start; /* Text on left */
-            box-shadow: -5px 5px 15px rgba(0,0,0,0.15); 
-        }
-
+        /* Inner Text "Opening..." */
         .peel-content {
             white-space: nowrap;
             color: #d4a373;
             font-family: 'Patrick Hand', cursive; 
             font-size: 1.6rem;
-            transform: scaleX(-1); 
-            opacity: 0.8;
-            margin: 0 25px; /* Padding from edge */
+            padding-left: 25px; /* Center in the curled part */
+            opacity: 0.9;
         }
 
-        /* Dynamic Gradient Overlay */
+        /* Gradient Overlay for the "Fold" */
         .sticker-curl::after {
             content: '';
             position: absolute; top: 0; right: 0; bottom: 0; left: 0;
-            background: var(--curl-gradient, linear-gradient(to right, rgba(255,255,255,0.2), transparent 40%, rgba(0,0,0,0.1) 80%, rgba(0,0,0,0.25) 100%));
+            /* Shadow gradient simulating the paper rolling up */
+            background: linear-gradient(to left, rgba(0,0,0,0.15) 0%, rgba(255,255,255,0.1) 20%, transparent 100%);
         }
 
-        .doodle-arrow { position: absolute; left: -50px; top: 20px; font-size: 2rem; color: #5c4d42; transform: rotate(-15deg); animation: bounceX 1s infinite alternate; font-family: 'Patrick Hand', cursive; pointer-events: none; }
-        .start-star { position: absolute; right: -40px; top: -40px; width: 70px; height: 70px; pointer-events: none; animation: fadeStar 1.5s ease-in-out infinite; }
+        /* Hint arrow logic */
+        .doodle-arrow { 
+            position: absolute; right: -50px; top: 20px; 
+            font-size: 2rem; color: #5c4d42; 
+            transform: rotate(15deg) scaleX(-1); /* Pointing to right edge */
+            animation: bounceLeft 1s infinite alternate; 
+            font-family: 'Patrick Hand', cursive; pointer-events: none; 
+        }
+        @keyframes bounceLeft { from { transform: translateX(0) rotate(15deg) scaleX(-1); } to { transform: translateX(-10px) rotate(15deg) scaleX(-1); } }
+
+        .start-star { position: absolute; left: -30px; top: -30px; width: 60px; height: 60px; pointer-events: none; animation: fadeStar 1.5s ease-in-out infinite; }
         
-        @keyframes fadeStar { 0%, 100% { opacity: 0.6; transform: scale(0.9) rotate(0deg); } 50% { opacity: 1; transform: scale(1.15) rotate(15deg); } }
-        @keyframes bounceX { from { transform: translateX(0) rotate(-15deg); } to { transform: translateX(-10px) rotate(-15deg); } }
+        @keyframes fadeStar { 0%, 100% { opacity: 0.6; transform: scale(0.9) rotate(0deg); } 50% { opacity: 1; transform: scale(1.15) rotate(-15deg); } }
 
         /* UI ELEMENTS */
         .page-title { position: fixed; top: 15%; left: 50%; transform: translate(-50%, -50%); font-family: 'Patrick Hand', cursive; font-size: 2rem; color: #5c4d42; width: 100%; text-align: center; z-index: 50; pointer-events: none; }
@@ -275,7 +282,7 @@
             
             <div class="sticker-flat" id="sticker-base">Start Here</div>
             
-            <div class="sticker-curl peel-left" id="sticker-curl">
+            <div class="sticker-curl" id="sticker-curl">
                 <div class="peel-content">Opening...</div>
             </div>
         </div>
@@ -284,25 +291,19 @@
     </div>
 
     <div id="page2" class="page-section" onclick="handleOutsideClick(event)">
-        <div class="nav-group">
-            <button class="nav-btn" onclick="navigateTo('page1')">Back</button>
-            <button class="nav-btn" onclick="navigateTo('page3')">Next ➜</button>
-        </div>
+        <div class="nav-group"><button class="nav-btn" onclick="navigateTo('page1')">Back</button><button class="nav-btn" onclick="navigateTo('page3')">Next ➜</button></div>
         <h2 class="page-title">What i know about u</h2>
         <div class="credits-container">
             <button class="credits-btn" onclick="toggleCredits(event)">Credits</button>
             <div class="credits-dropdown" id="creditsMenu">
                 <div class="credit-item"><span class="credit-name">Faizan</span>Director</div>
                 <div class="credit-item"><span class="credit-name">Gemini Pro</span>Writer</div>
-                <div class="credit-item"><span class="credit-name">Time</span>lgta hai bhai</div>
             </div>
         </div>
         <div class="menu-container" id="menuContainer" onmouseenter="openMenu()" onmouseleave="closeMenu()">
             <div class="main-menu-btn" onclick="toggleMenuMobile(event)">+</div>
             <div class="tool-list">
-                <div class="tool-btn" id="broom-btn" onclick="toggleEraser(event)">
-                    <svg viewBox="0 0 24 24"><path d="M12 2L2 12l4 4 10-10-4-4zM2 12l10 10 4-4-10-10-4 4z"></path><path d="M16 16l4 4"></path></svg>
-                </div>
+                <div class="tool-btn" id="broom-btn" onclick="toggleEraser(event)"><svg viewBox="0 0 24 24"><path d="M12 2L2 12l4 4 10-10-4-4zM2 12l10 10 4-4-10-10-4 4z"></path><path d="M16 16l4 4"></path></svg></div>
                 <div class="tool-btn" onclick="openLetter()"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></div>
                 <div class="tool-btn" onclick="openSecretLock()"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
                 <div class="tool-btn" onclick="takeScreenshotMode()"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></div>
@@ -329,19 +330,9 @@
         <div id="final-msg"></div>
     </div>
 
-    <div id="letter-modal" class="modal-overlay" onclick="closeModal('letter-modal')">
-        <div class="paper-note" onclick="event.stopPropagation()">
-            <span class="close-note" onclick="closeModal('letter-modal')">&times;</span><p>Hey,<br><br>Just wanted to make something as cool as you.<br>Hope this brings a smile to your face!<br><br>- Faizan</p>
-        </div>
-    </div>
-    <div id="secret-lock-modal" class="modal-overlay" onclick="closeModal('secret-lock-modal')">
-        <div class="secret-box" onclick="event.stopPropagation()">
-            <span class="close-note" onclick="closeModal('secret-lock-modal')">&times;</span><h3>Top Secret 🤫</h3><p style="font-size: 0.8rem; color: #888;">Enter Password:</p><input type="text" id="secret-pass" class="secret-input" placeholder="???"><button class="secret-btn" onclick="checkPassword()">Unlock</button>
-        </div>
-    </div>
-    <div id="secret-content-modal" class="modal-overlay" onclick="closeModal('secret-content-modal')">
-        <div class="paper-note" style="background: #e3f2fd;" onclick="event.stopPropagation()"><span class="close-note" onclick="closeModal('secret-content-modal')">&times;</span><h3 style="text-align:center;">🎉 Access Granted!</h3><p>(This space is waiting for your secret content...)</p></div>
-    </div>
+    <div id="letter-modal" class="modal-overlay" onclick="closeModal('letter-modal')"><div class="paper-note" onclick="event.stopPropagation()"><span class="close-note" onclick="closeModal('letter-modal')">&times;</span><p>Hey,<br><br>Just wanted to make something as cool as you.<br>Hope this brings a smile to your face!<br><br>- Faizan</p></div></div>
+    <div id="secret-lock-modal" class="modal-overlay" onclick="closeModal('secret-lock-modal')"><div class="secret-box" onclick="event.stopPropagation()"><span class="close-note" onclick="closeModal('secret-lock-modal')">&times;</span><h3>Top Secret 🤫</h3><p style="font-size: 0.8rem; color: #888;">Enter Password:</p><input type="text" id="secret-pass" class="secret-input" placeholder="???"><button class="secret-btn" onclick="checkPassword()">Unlock</button></div></div>
+    <div id="secret-content-modal" class="modal-overlay" onclick="closeModal('secret-content-modal')"><div class="paper-note" style="background: #e3f2fd;" onclick="event.stopPropagation()"><span class="close-note" onclick="closeModal('secret-content-modal')">&times;</span><h3 style="text-align:center;">🎉 Access Granted!</h3><p>(This space is waiting for your secret content...)</p></div></div>
 
     <div id="hint">TAP & DRAG</div><div id="music-status"></div><audio id="bg-audio"></audio>
 
@@ -374,7 +365,7 @@
             setTimeout(() => trail.remove(), 800);
         }
 
-        // --- 2. BI-DIRECTIONAL PEEL LOGIC ---
+        // --- 2. UNIDIRECTIONAL (RIGHT-TO-LEFT) PEEL LOGIC ---
         const peelWrapper = document.getElementById('peel-wrapper');
         const peelBase = document.getElementById('sticker-base');
         const peelCurl = document.getElementById('sticker-curl');
@@ -383,33 +374,17 @@
         let startPeelX = 0;
         let startPeelY = 0;
         let peelProgress = 0;
-        let isRightPeel = false;
 
         function startPeel(e) {
             if (isStarted) return;
             isPeeling = true;
-            const cx = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-            const cy = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-            startPeelX = cx; startPeelY = cy;
+            startPeelX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            startPeelY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
             
-            // Detect side: click on right half -> peel left
-            const rect = peelWrapper.getBoundingClientRect();
-            isRightPeel = (cx - rect.left) > (rect.width / 2);
-
+            // Allow transitions only during snap-back, not drag
             peelBase.style.transition = 'none';
             peelCurl.style.transition = 'none';
             
-            // Set up initial state for direction
-            if (isRightPeel) {
-                peelCurl.classList.remove('peel-left');
-                peelCurl.classList.add('peel-right');
-                peelCurl.style.setProperty('--curl-gradient', 'linear-gradient(to left, rgba(255,255,255,0.2), transparent 40%, rgba(0,0,0,0.1) 80%, rgba(0,0,0,0.25) 100%)');
-            } else {
-                peelCurl.classList.remove('peel-right');
-                peelCurl.classList.add('peel-left');
-                peelCurl.style.setProperty('--curl-gradient', 'linear-gradient(to right, rgba(255,255,255,0.2), transparent 40%, rgba(0,0,0,0.1) 80%, rgba(0,0,0,0.25) 100%)');
-            }
-
             if (audio.paused) { audio.src = playlist[0]; audio.play(); }
         }
 
@@ -418,22 +393,19 @@
             const cx = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
             const cy = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
             
-            let deltaX = cx - startPeelX;
-            let deltaY = cy - startPeelY;
+            const deltaX = cx - startPeelX;
+            const deltaY = cy - startPeelY;
             
-            // Calculate progress based on direction
-            let progress = 0;
-            if (isRightPeel) {
-                if (deltaX > 0) return; // Can only pull left
-                progress = Math.min(Math.abs(deltaX) / 200, 1);
-            } else {
-                if (deltaX < 0) return; // Can only pull right
-                progress = Math.min(deltaX / 200, 1);
-            }
+            // STRICTLY RIGHT TO LEFT: Ignore positive deltaX
+            if (deltaX > 0) return; 
             
-            progress = Math.pow(progress, 0.8); // Resistance
+            const maxDrag = 200; 
+            let progress = Math.min(Math.abs(deltaX) / maxDrag, 1);
             
-            // Skew: dragging down = skew positive (left peel) or negative (right peel)
+            // Add resistance
+            progress = Math.pow(progress, 0.8); 
+            
+            // Skew calculation (Up/Down drag adds distortion)
             let skew = deltaY * 0.1;
             skew = Math.max(Math.min(skew, 20), -20);
 
@@ -449,29 +421,22 @@
             peelCurl.style.transition = 'all 0.4s ease-out';
 
             if (peelProgress > 0.6) {
-                // Success
+                // SUCCESS: Rip off to the left
                 isStarted = true;
-                if (isRightPeel) {
-                    peelBase.style.clipPath = `inset(0 250px 0 0)`;
-                    peelCurl.style.transform = `translateX(100%) rotate(10deg) scale(1.1)`;
-                } else {
-                    peelBase.style.clipPath = `inset(0 0 0 250px)`;
-                    peelCurl.style.transform = `translateX(-100%) rotate(-10deg) scale(1.1)`;
-                }
+                // Clip essentially everything
+                peelBase.style.clipPath = `inset(0 250px 0 0)`;
+                // Fly off to left
+                peelCurl.style.width = '240px'; 
+                peelCurl.style.right = '240px'; // Move hinge
+                peelCurl.style.transform = `translateX(100%) rotate(-10deg) scale(1.1)`;
                 peelCurl.style.opacity = '0';
                 setTimeout(() => navigateTo('page2'), 500);
             } else {
-                // Snap back
-                peelBase.style.clipPath = isRightPeel ? `inset(0 0 0 0)` : `inset(0 0 0 0)`;
+                // SNAP BACK
+                peelBase.style.clipPath = `inset(0 0 0 0)`;
                 peelCurl.style.width = `0px`;
-                // Reset transform
-                if (isRightPeel) {
-                    peelCurl.style.left = '240px'; 
-                    peelCurl.style.transform = `translateX(0) skewY(0deg)`;
-                } else {
-                    peelCurl.style.left = '0px';
-                    peelCurl.style.transform = `translateX(-100%) skewY(0deg)`;
-                }
+                peelCurl.style.right = `0px`;
+                peelCurl.style.transform = `translateX(100%) skewY(0deg)`;
             }
         }
 
@@ -479,21 +444,15 @@
             const width = 240; 
             const peelAmount = p * width;
             
-            if (isRightPeel) {
-                // Clip from right
-                peelBase.style.clipPath = `inset(0 ${peelAmount}px 0 0)`;
-                // Curl starts at cut line and goes right
-                peelCurl.style.width = `${peelAmount}px`;
-                peelCurl.style.left = `${width - peelAmount}px`;
-                peelCurl.style.transform = `translateX(0) skewY(${-skew}deg)`;
-            } else {
-                // Clip from left
-                peelBase.style.clipPath = `inset(0 0 0 ${peelAmount}px)`;
-                // Curl starts at cut line and goes left
-                peelCurl.style.width = `${peelAmount}px`;
-                peelCurl.style.left = `${peelAmount}px`;
-                peelCurl.style.transform = `translateX(-100%) skewY(${skew}deg)`;
-            }
+            // Clip base from the RIGHT
+            peelBase.style.clipPath = `inset(0 ${peelAmount}px 0 0)`;
+            
+            // Curl grows from the cut line
+            peelCurl.style.width = `${peelAmount}px`;
+            peelCurl.style.right = `${peelAmount}px`; // Anchor moves left
+            
+            // Transform keeps it flipped over the empty space
+            peelCurl.style.transform = `translateX(100%) skewY(${-skew}deg)`;
         }
 
         peelWrapper.addEventListener('mousedown', startPeel);
@@ -504,7 +463,7 @@
         window.addEventListener('touchend', endPeel);
 
 
-        // --- 3. STANDARD LOGIC & FLOWERS RESTORED ---
+        // --- 3. STANDARD LOGIC & RESTORED FLOWERS ---
         const playlist = ['song1.mp3', 'song2.mp3']; 
         let currentTrack = 0;
         const colors = ['#f8ad9d', '#fbc4ab', '#ffdab9', '#ece4db', '#d8e2dc'];
@@ -669,7 +628,7 @@
             const size = Math.random() * 40 + 50; 
             const f = document.createElement('div'); f.className = 'flower';
             f.style.left = x + 'px'; f.style.top = y + 'px'; f.style.setProperty('--r', Math.random()*360+'deg');
-            // Restored the multi-circle flower SVG
+            // Restored the complex multi-circle flower
             f.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 100 100"><circle cx="50" cy="30" r="25" fill="${color}" stroke="rgba(0,0,0,0.05)"/><circle cx="50" cy="70" r="25" fill="${color}" stroke="rgba(0,0,0,0.05)"/><circle cx="30" cy="50" r="25" fill="${color}" stroke="rgba(0,0,0,0.05)"/><circle cx="70" cy="50" r="25" fill="${color}" stroke="rgba(0,0,0,0.05)"/><circle cx="50" cy="50" r="12" fill="#fffcf2"/><path d="M50 30 L50 70 M30 50 L70 50" stroke="rgba(0,0,0,0.1)" stroke-width="1.2"/></svg>`;
             document.body.appendChild(f);
             if(Math.random()<0.3) {
