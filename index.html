@@ -54,6 +54,13 @@
             z-index: 9998; opacity: 0.8;
             animation: fadeTrail 0.8s ease-out forwards;
         }
+        
+        /* --- NEW: WHITE TRAIL WITH PURPLE GLOW (For Outro) --- */
+        .cursor-trail.white-mode {
+            background: #ffffff !important;
+            box-shadow: 0 0 8px 2px rgba(188, 19, 254, 0.6);
+        }
+
         @keyframes fadeTrail { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(0); opacity: 0; margin-top: 10px; } }
 
         /* --- PAGE TRANSITIONS --- */
@@ -177,13 +184,13 @@
             object-fit: cover; 
             z-index: 1; /* LOWEST LEVEL */
             display: none; pointer-events: none; opacity: 0;
-            transition: opacity 2s ease-in-out;
+            transition: opacity 1.5s ease-in-out;
         }
         
         /* --- CONFETTI (Z-INDEX 90) --- */
         .confetti { position: absolute; pointer-events: none; z-index: 9000; font-size: 1.5rem; }
 
-        /* --- NEW SPARKLE HOVER EFFECT --- */
+        /* --- HOVER SPARKLE EFFECT --- */
         .hover-sparkle {
             position: absolute;
             pointer-events: none;
@@ -400,11 +407,24 @@
 
         // --- CURSOR TRAIL LOGIC (Disabled on Page 2) ---
         function spawnTrail(x, y) {
-            if (document.getElementById('page2').classList.contains('active') || document.getElementById('page1').classList.contains('active')) return;
+            // Check active pages
+            const p2 = document.getElementById('page2');
+            const p3 = document.getElementById('page3');
+            const p4 = document.getElementById('page4');
+
+            // If we are on Page 1 or Page 2, NO TRAIL
+            if (!p3.classList.contains('active') && !p4.classList.contains('active')) return;
 
             const trail = document.createElement('div');
             trail.className = 'cursor-trail';
-            trail.style.left = x + 'px'; trail.style.top = y + 'px';
+
+            // IF ON PAGE 4 (OUTRO), ADD WHITE GLOW
+            if (p4.classList.contains('active') && document.getElementById('q-content').style.display === 'none') {
+                trail.classList.add('white-mode');
+            }
+
+            trail.style.left = x + 'px';
+            trail.style.top = y + 'px';
             document.body.appendChild(trail);
             setTimeout(() => trail.remove(), 800);
         }
@@ -478,7 +498,8 @@
         // --- PAGE NAVIGATION ---
         function navigateTo(pageId) {
             document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
+            const target = document.getElementById(pageId);
+            target.classList.add('active');
 
             if (pageId !== 'page2') {
                 const flowers = document.querySelectorAll('.flower');
@@ -587,7 +608,7 @@
                 txt.style.animationDelay = (Math.random() * 5) + 's';
                 container.appendChild(txt);
             }
-            // NO WHITE DOTS CREATED HERE
+            // NO WHITE DOTS CREATED HERE (REMOVED)
         }
 
         function moveNah() {
@@ -607,9 +628,8 @@
             stopSparkles();
 
             if(type === 'yes') {
-                // PAGE BECOMES TRANSPARENT (TO SEE VIDEO BEHIND IT)
+                // IMPORTANT: SET BACKGROUND TO TRANSPARENT SO VIDEO SHOWS
                 container.style.background = "transparent";
-                // BODY BECOMES BLACK
                 document.body.style.backgroundColor = "black";
                 
                 content.style.display = 'none';
