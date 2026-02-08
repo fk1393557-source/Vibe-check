@@ -94,12 +94,7 @@
         /* --- UI ELEMENTS --- */
         .grain-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9000; opacity: 0.05; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
         
-        #page1 { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-        }
+        #page1 { display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
         #background-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
         .bg-item { position: absolute; top: 110%; opacity: 0; animation: riseUp linear infinite; }
@@ -140,7 +135,6 @@
 
         /* UI ELEMENTS */
         .page-title { position: fixed; top: 15%; left: 50%; transform: translate(-50%, -50%); font-family: 'Patrick Hand', cursive; font-size: 2rem; color: #5c4d42; width: 100%; text-align: center; z-index: 50; pointer-events: none; }
-        
         .credits-container { position: fixed; top: 25px; right: 25px; z-index: 2000; display: flex; flex-direction: column; align-items: flex-end; }
         .credits-btn { background: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.6); padding: 8px 18px; border-radius: 30px; color: var(--text); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; backdrop-filter: blur(8px); }
         .credits-dropdown { margin-top: 15px; background: rgba(255,255,255,0.95); border-radius: 20px; padding: 20px; min-width: 140px; opacity: 0; transform: translateY(-10px); pointer-events: none; transition: 0.3s; position: absolute; top: 40px; right: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
@@ -177,31 +171,31 @@
         
         /* RAIN ELEMENTS */
         .falling-item { position: absolute; top: -100px; pointer-events: none; }
-        .falling-vector { font-family: 'Patrick Hand', cursive; color: rgba(92, 77, 66, 0.3); font-size: 1.5rem; z-index: 1; animation: fallDownVector linear infinite; }
+        .falling-vector { font-family: 'Patrick Hand', cursive; color: rgba(92, 77, 66, 0.3); font-size: 1.5rem; z-index: 45; animation: fallDownVector linear infinite; }
         .falling-envelope { z-index: 1; font-size: 2rem; opacity: 0.3; animation: fallDownEnvelope linear infinite; }
-        .falling-envelope-celebration { z-index: 1; font-size: 1.8rem; opacity: 0.4; animation: fallDownCelebration linear infinite; }
+        .falling-envelope-celebration { z-index: 45; font-size: 1.8rem; opacity: 0.4; animation: fallDownCelebration linear infinite; }
         .falling-text {
             position: absolute; top: -50px; font-family: 'Patrick Hand', cursive; 
             color: #d8b4e2; font-size: 0.9rem; opacity: 0.5; pointer-events: none; z-index: 55; 
             white-space: nowrap; animation: fallDownText linear infinite;
         }
         
-        /* --- GLOWING WHITE DOTS (BACKGROUND) --- */
-        .particle { 
-            position: absolute; pointer-events: none; z-index: 52; opacity: 0; 
-            animation: floatUpParticle linear infinite; 
-            background: white; border-radius: 50%;
-            box-shadow: 0 0 5px white, 0 0 10px rgba(255,255,255,0.5);
+        /* --- 🎞️ VIDEO BACKGROUND --- */
+        #outro-video-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; 
+            z-index: 25; /* BEHIND CONTENT, ABOVE BLACK BG */
+            display: none; pointer-events: none; opacity: 0;
+            transition: opacity 1.5s ease-in-out;
         }
         
         /* --- CONFETTI (EMOJIS) --- */
         .confetti { position: absolute; pointer-events: none; z-index: 9000; font-size: 1.5rem; }
 
-        /* --- NEW SPARKLE HOVER EFFECT (BIGGER & AROUND) --- */
+        /* --- NEW SPARKLE HOVER EFFECT --- */
         .hover-sparkle {
             position: absolute;
             pointer-events: none;
-            /* BIGGER SIZE */
             width: 50px; height: 50px; 
             background-image: url('spark.png');
             background-size: contain;
@@ -219,7 +213,6 @@
         @keyframes fallDownEnvelope { 0% { top: -10%; transform: rotate(0deg); } 100% { top: 110%; transform: rotate(20deg); } }
         @keyframes fallDownCelebration { 0% { top: -10%; transform: rotate(0deg); opacity: 0; } 20% { opacity: 0.4; } 100% { top: 110%; transform: rotate(-10deg); opacity: 0; } }
         @keyframes fallDownText { 0% { top: -10%; opacity: 0; } 15% { opacity: 0.5; } 85% { opacity: 0.5; } 100% { top: 110%; opacity: 0; } }
-        @keyframes floatUpParticle { 0% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 20% { opacity: 0.8; } 80% { opacity: 0.8; } 100% { transform: translateY(-10vh) scale(1); opacity: 0; } }
 
         .final-glow { font-family: 'Patrick Hand', cursive; font-size: 3rem; color: #fff; text-align: center; line-height: 1.4; text-shadow: 0 0 15px rgba(255, 255, 255, 0.2), 0 0 30px rgba(188, 19, 254, 0.4); animation: softPulse 5s ease-in-out infinite; position: relative; z-index: 60; padding: 0 20px; }
         
@@ -285,14 +278,16 @@
     <div id="doodle-cursor"></div>
     <div class="grain-overlay"></div>
 
+    <video id="outro-video-bg" muted loop playsinline>
+        <source src="video.mp4" type="video/mp4">
+    </video>
+
     <div id="page1" class="page-section active">
         <div id="background-layer"></div>
         <h1 class="invite-text">This is an invitation to my<br>possibly future friend : )</h1>
         <div class="sticker-wrapper">
             <div class="doodle-arrow">➜</div>
-            
             <img src="star.png" class="start-star">
-            
             <div class="sticker" id="sticker-btn">
                 <div class="face face-front">Start Here</div>
                 <div class="face face-back">Opening...</div>
@@ -395,47 +390,6 @@
     <audio id="bg-audio"></audio>
 
     <script>
-        // --- SPARKLE HOVER EFFECT ---
-        let sparkleInterval;
-        const btnYes = document.getElementById('btn-yes');
-
-        function startSparkles() {
-            if (sparkleInterval) return;
-            sparkleInterval = setInterval(() => {
-                createHoverSparkle(btnYes);
-            }, 20); 
-        }
-
-        function stopSparkles() {
-            clearInterval(sparkleInterval);
-            sparkleInterval = null;
-        }
-
-        function createHoverSparkle(btn) {
-            if (!btn) return;
-            const rect = btn.getBoundingClientRect();
-            const sparkle = document.createElement('div');
-            sparkle.className = 'hover-sparkle';
-            
-            // Random spawn point inside button
-            const x = rect.left + Math.random() * rect.width;
-            const y = rect.top + Math.random() * rect.height;
-            sparkle.style.left = x + 'px';
-            sparkle.style.top = y + 'px';
-            
-            // INCREASED VELOCITY FOR "AROUND" EFFECT
-            const angle = Math.random() * Math.PI * 2;
-            const velocity = 80 + Math.random() * 80; // Faster/Further
-            const tx = Math.cos(angle) * velocity + 'px';
-            const ty = Math.sin(angle) * velocity + 'px';
-            
-            sparkle.style.setProperty('--tx', tx);
-            sparkle.style.setProperty('--ty', ty);
-            
-            document.body.appendChild(sparkle);
-            setTimeout(() => sparkle.remove(), 800);
-        }
-
         const cursor = document.getElementById('doodle-cursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
@@ -453,7 +407,7 @@
             spawnTrail(t.clientX, t.clientY);
         });
 
-        // --- CURSOR TRAIL LOGIC (DISABLED ON PAGE 2) ---
+        // --- CURSOR TRAIL LOGIC (Disabled on Page 2) ---
         function spawnTrail(x, y) {
             // ONLY SPAWN ON PAGE 3 & 4 (Not on Page 1 or 2)
             if (document.getElementById('page2').classList.contains('active') || document.getElementById('page1').classList.contains('active')) return;
@@ -463,6 +417,35 @@
             trail.style.left = x + 'px'; trail.style.top = y + 'px';
             document.body.appendChild(trail);
             setTimeout(() => trail.remove(), 800);
+        }
+
+        // --- HOVER SPARKLES ---
+        let sparkleInterval;
+        const btnYes = document.getElementById('btn-yes');
+        function startSparkles() { if(sparkleInterval) return; sparkleInterval = setInterval(() => { createHoverSparkle(btnYes); }, 20); }
+        function stopSparkles() { clearInterval(sparkleInterval); sparkleInterval = null; }
+        
+        function createHoverSparkle(btn) { 
+            if(!btn) return; 
+            const rect = btn.getBoundingClientRect(); 
+            const sparkle = document.createElement('div'); 
+            sparkle.className = 'hover-sparkle'; 
+            
+            const x = rect.left + Math.random() * rect.width; 
+            const y = rect.top + Math.random() * rect.height; 
+            sparkle.style.left = x + 'px'; 
+            sparkle.style.top = y + 'px'; 
+            
+            const angle = Math.random() * Math.PI * 2; 
+            const v = 80 + Math.random() * 80; 
+            const tx = Math.cos(angle) * v + 'px'; 
+            const ty = Math.sin(angle) * v + 'px'; 
+            
+            sparkle.style.setProperty('--tx', tx); 
+            sparkle.style.setProperty('--ty', ty); 
+            
+            document.body.appendChild(sparkle); 
+            setTimeout(() => sparkle.remove(), 800); 
         }
 
         const playlist = ['song1.mp3', 'song2.mp3']; 
@@ -521,9 +504,7 @@
             if (pageId === 'page2') {
                 document.getElementById('hint').style.display = 'block';
                 document.getElementById('music-status').style.display = 'block';
-                // ANIMATED DOTS
                 document.getElementById('music-status').innerHTML = "Vibing<span class='typing-dots'></span> 🎵";
-                
                 document.querySelectorAll('.falling-item').forEach(i => i.remove());
             }
             if (pageId === 'page3') {
@@ -593,20 +574,6 @@
             }
         }
 
-        function createParticles() {
-            const container = document.getElementById('page4');
-            for(let i=0; i<40; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                const size = Math.random() * 3 + 2;
-                p.style.width = size + 'px'; p.style.height = size + 'px';
-                p.style.left = Math.random() * 100 + 'vw';
-                p.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                p.style.animationDelay = (Math.random() * 5) + 's';
-                container.appendChild(p);
-            }
-        }
-
         function startCelebrationRain() {
             const container = document.getElementById('page4');
             const existing = container.querySelectorAll('.falling-envelope');
@@ -631,7 +598,7 @@
                 txt.style.animationDelay = (Math.random() * 5) + 's';
                 container.appendChild(txt);
             }
-            createParticles();
+            // NO createParticles() HERE (REMOVED WHITE DOTS)
         }
 
         function moveNah() {
@@ -645,34 +612,31 @@
             const msg = document.getElementById('final-msg');
             const container = document.getElementById('page4');
             const content = document.getElementById('q-content');
+            const video = document.getElementById('outro-video-bg');
             
             document.getElementById('q-nav').style.display = 'none'; 
-            
             stopSparkles();
 
             if(type === 'yes') {
                 container.style.background = "#000";
-                container.style.backgroundImage = "none";
                 content.style.display = 'none';
                 
+                // === VIDEO FADE IN ===
+                video.style.display = 'block';
+                video.play();
+                setTimeout(() => video.style.opacity = '1', 50);
+
                 // === MUSIC ICON IN TEXT ===
                 msg.innerHTML = '<h1 class="final-glow">We’re officially friends now <img src="music.png" class="music-icon"></h1>';
                 
                 audio.pause();
                 const celebration = new Audio('Song3.mp3');
-                
                 let vol = 0.2;
                 celebration.volume = vol;
-                
                 celebration.play().catch(e => console.log("Audio play error", e));
-                
                 const fadeInterval = setInterval(() => {
-                    if (vol < 1.0) {
-                        vol = Math.min(vol + 0.3, 1.0);
-                        celebration.volume = vol;
-                    } else {
-                        clearInterval(fadeInterval);
-                    }
+                    if (vol < 1.0) { vol = Math.min(vol + 0.3, 1.0); celebration.volume = vol; } 
+                    else { clearInterval(fadeInterval); }
                 }, 2000);
 
                 celebration.onended = function() {
