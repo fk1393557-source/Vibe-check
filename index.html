@@ -32,7 +32,6 @@
         #doodle-cursor {
             position: fixed; top: 0; left: 0; width: 32px; height: 32px;
             pointer-events: none; z-index: 9999;
-            /* SVG updated for black pencil outline and rounded joints/caps */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24'%3E%3Cpath fill='%23fffcf2' stroke='%232c2c2c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M5.5 3.5 L 11 17 C 11.2 17.5, 11.8 17.8, 12.3 17.4 L 14.5 12.5 L 19.5 10.5 C 20 10.3, 20.2 9.7, 19.8 9.3 L 6.5 3.2 C 6 2.9, 5.3 3.1, 5.5 3.5 Z'/%3E%3C/svg%3E");
             background-size: contain; background-repeat: no-repeat;
             transform-origin: top left;
@@ -44,8 +43,6 @@
             body, html { cursor: auto; } 
         }
         @keyframes breathe-cursor { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
-        
-        /* Interaction States */
         #doodle-cursor.hovering { animation: none; transform: rotate(-15deg) scale(1.1); }
         #doodle-cursor.clicking { transform: scale(0.9); }
         
@@ -59,13 +56,10 @@
             z-index: 9998; opacity: 0.8;
             animation: fadeTrail 0.8s ease-out forwards;
         }
-        
-        /* --- WHITE TRAIL WITH PURPLE GLOW (For Outro) --- */
         .cursor-trail.white-mode {
             background: #ffffff !important;
             box-shadow: 0 0 8px 2px rgba(188, 19, 254, 0.6);
         }
-
         @keyframes fadeTrail { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(0); opacity: 0; margin-top: 10px; } }
 
         /* --- PAGE TRANSITIONS --- */
@@ -114,6 +108,7 @@
 
         .invite-text { position: relative; z-index: 30; font-family: 'Patrick Hand', cursive; color: #5c4d42; font-size: 1.8rem; text-align: center; margin-bottom: 70px; line-height: 1.4; max-width: 85%; pointer-events: none; text-shadow: 2px 2px 0px rgba(255,255,255,0.6); }
         
+        /* --- 🧩 NEW PEEL STICKER CSS --- */
         .sticker-wrapper { 
             position: relative; 
             width: 240px; height: 70px; 
@@ -144,21 +139,16 @@
             background: var(--sticker-back);
             border-radius: 50px 0 0 50px; 
             overflow: hidden;
-            
-            /* Folded over from left */
             transform-origin: right center;
             transform: translateX(-100%); 
-            
             box-shadow: -5px 5px 15px rgba(0,0,0,0.15); 
             display: flex; align-items: center; justify-content: flex-end; 
             pointer-events: none; 
             z-index: 50;
-            /* Allow it to grow beyond container */
             max-width: none;
             will-change: width, transform;
         }
 
-        /* Inner Text "Opening..." */
         .peel-content {
             white-space: nowrap;
             color: #d4a373;
@@ -176,19 +166,9 @@
         }
 
         .doodle-arrow { position: absolute; left: -50px; top: 20px; font-size: 2rem; color: #5c4d42; transform: rotate(-15deg); animation: bounceX 1s infinite alternate; font-family: 'Patrick Hand', cursive; pointer-events: none; }
+        .start-star { position: absolute; right: -40px; top: -40px; width: 70px; height: 70px; pointer-events: none; animation: fadeStar 1.5s ease-in-out infinite; }
         
-        /* --- START BUTTON STAR --- */
-        .start-star { 
-            position: absolute; right: -40px; top: -40px; 
-            width: 70px; height: 70px; 
-            pointer-events: none; 
-            animation: fadeStar 1.5s ease-in-out infinite; 
-        }
-        @keyframes fadeStar { 
-            0%, 100% { opacity: 0.6; transform: scale(0.9) rotate(0deg); } 
-            50% { opacity: 1; transform: scale(1.15) rotate(15deg); } 
-        }
-
+        @keyframes fadeStar { 0%, 100% { opacity: 0.6; transform: scale(0.9) rotate(0deg); } 50% { opacity: 1; transform: scale(1.15) rotate(15deg); } }
         @keyframes bounceX { from { transform: translateX(0) rotate(-15deg); } to { transform: translateX(-10px) rotate(-15deg); } }
 
         /* UI ELEMENTS */
@@ -218,11 +198,12 @@
         
         #page4 { display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        /* RAIN ELEMENTS - MODIFIED FOR IMAGES */
+        /* RAIN ELEMENTS */
         .falling-item { position: absolute; top: -100px; pointer-events: none; }
+        
         .falling-vector { 
-            /* Changed for images: fit contained, no text color needed */
-            z-index: 45; 
+            /* High Z-Index to fall OVER the text */
+            z-index: 100; 
             animation: fallDownVector linear infinite; 
             object-fit: contain;
         }
@@ -235,29 +216,22 @@
             white-space: nowrap; animation: fallDownText linear infinite;
         }
         
-        /* --- 🎞️ VIDEO BACKGROUND (Z-INDEX 1) --- */
+        /* --- 🎞️ VIDEO BACKGROUND --- */
         #outro-video-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; 
-            z-index: 1; /* LOWEST LEVEL */
-            display: none; pointer-events: none; opacity: 0;
+            object-fit: cover; z-index: 1; display: none; pointer-events: none; opacity: 0;
             transition: opacity 1.5s ease-in-out;
         }
         
-        /* --- CONFETTI (Z-INDEX 90) --- */
+        /* --- CONFETTI --- */
         .confetti { position: absolute; pointer-events: none; z-index: 9000; font-size: 1.5rem; }
 
         /* --- HOVER SPARKLE EFFECT --- */
         .hover-sparkle {
-            position: absolute;
-            pointer-events: none;
+            position: absolute; pointer-events: none;
             width: 50px; height: 50px; 
-            background-image: url('spark.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            z-index: 60;
-            animation: sparkleOut 0.8s ease-out forwards;
-            mix-blend-mode: screen; 
+            background-image: url('spark.png'); background-size: contain; background-repeat: no-repeat;
+            z-index: 60; animation: sparkleOut 0.8s ease-out forwards; mix-blend-mode: screen; 
         }
         @keyframes sparkleOut {
             0% { opacity: 1; transform: scale(0.5) translate(0, 0); }
@@ -270,18 +244,10 @@
         @keyframes fallDownText { 0% { top: -10%; opacity: 0; } 15% { opacity: 0.5; } 85% { opacity: 0.5; } 100% { top: 110%; opacity: 0; } }
 
         .final-glow { font-family: 'Patrick Hand', cursive; font-size: 3rem; color: #fff; text-align: center; line-height: 1.4; text-shadow: 0 0 15px rgba(255, 255, 255, 0.2), 0 0 30px rgba(188, 19, 254, 0.4); animation: softPulse 5s ease-in-out infinite; position: relative; z-index: 60; padding: 0 20px; }
-        
-        /* --- MUSIC ICON IN TEXT --- */
-        .music-icon {
-            display: inline-block;
-            width: 55px; height: 55px; 
-            vertical-align: middle;
-            margin-left: 10px; margin-bottom: 5px;
-            animation: spinMusic 4s linear infinite;
-        }
+        .music-icon { display: inline-block; width: 55px; height: 55px; vertical-align: middle; margin-left: 10px; margin-bottom: 5px; animation: spinMusic 4s linear infinite; }
         @keyframes spinMusic { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
         @keyframes softPulse { 0%, 100% { transform: scale(1); opacity: 0.95; } 50% { transform: scale(1.02); opacity: 1; } }
+        
         .question-text { position: relative; z-index: 50; font-family: 'Patrick Hand', cursive; font-size: 2.5rem; color: var(--text); text-align: center; margin-bottom: 50px; max-width: 80%; line-height: 1.2; animation: breathe 3s ease-in-out infinite; }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         .option-group { position: relative; z-index: 50; display: flex; flex-wrap: wrap; justify-content: center; max-width: 320px; gap: 15px; }
@@ -291,13 +257,7 @@
         #final-msg { margin-top: 40px; font-family: 'Patrick Hand', cursive; font-size: 1.6rem; color: #d4a373; text-align: center; min-height: 50px; padding: 0 20px; position:relative; z-index:50; }
         
         /* FLOWERS */
-        .flower { 
-            position: absolute; pointer-events: none; 
-            transform: translate(-50%, -50%) scale(0); 
-            animation: bloom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; 
-            filter: drop-shadow(4px 4px 6px rgba(0,0,0,0.1)); 
-            z-index: 2000; 
-        }
+        .flower { position: absolute; pointer-events: none; transform: translate(-50%, -50%) scale(0); animation: bloom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; filter: drop-shadow(4px 4px 6px rgba(0,0,0,0.1)); z-index: 2000; }
         @keyframes bloom { to { transform: translate(-50%, -50%) scale(1) rotate(var(--r)); } }
         .bubble { position: absolute; background: #fff; padding: 10px 20px; border-radius: 2px 20px 20px 20px; font-family: 'Patrick Hand', cursive; font-size: 1.2rem; color: var(--text); pointer-events: none; animation: floatUpBubble 4s ease-out forwards; z-index: 100; white-space: nowrap; box-shadow: 2px 4px 15px rgba(0,0,0,0.05); transform: rotate(-2deg); }
         @keyframes floatUpBubble { 0% { opacity: 0; transform: translate(-50%, 10px) rotate(-2deg); } 15% { opacity: 1; transform: translate(-50%, 0) rotate(-2deg); } 100% { opacity: 0; transform: translate(-50%, -120px) rotate(5deg); } }
@@ -312,21 +272,8 @@
         .secret-btn { background: #d4a373; color: white; border: none; padding: 8px 20px; border-radius: 15px; font-weight: 600; cursor: pointer; }
         #hint { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; color: #d4a373; letter-spacing: 4px; font-size: 0.8rem; z-index: 10; display: none; }
         #music-status { position: fixed; top: 30px; left: 25px; font-size: 0.7rem; color: #d4a373; letter-spacing: 2px; font-weight: 600; text-transform: uppercase; display: none; }
-
-        /* --- ANIMATED DOTS FOR VIBING --- */
-        .typing-dots::after {
-            content: '...';
-            animation: dotAnim 1.5s infinite steps(4);
-            display: inline-block;
-            width: 15px; 
-            text-align: left;
-        }
-        @keyframes dotAnim {
-            0% { content: ''; }
-            25% { content: '.'; }
-            50% { content: '..'; }
-            75% { content: '...'; }
-        }
+        .typing-dots::after { content: '...'; animation: dotAnim 1.5s infinite steps(4); display: inline-block; width: 15px; text-align: left; }
+        @keyframes dotAnim { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
     </style>
 </head>
 <body>
@@ -696,7 +643,7 @@
             const container = document.getElementById('page3');
             const old = container.querySelectorAll('.falling-item'); old.forEach(o=>o.remove());
             
-            for(let i=0; i<35; i++) { 
+            for(let i=0; i<12; i++) { 
                 const vec = document.createElement('img'); // Change to img
                 vec.className = 'falling-item falling-vector';
                 vec.src = musicImages[Math.floor(Math.random() * musicImages.length)];
